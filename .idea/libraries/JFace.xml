@@ -1,0 +1,19 @@
+<component name="libraryTable">
+  <library name="JFace">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/swt_linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/org.eclipse.jface.text_3.6.1.r361_v20100825-0800.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/org.eclipse.jface_3.6.1.M20100825-0800.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/org.eclipse.core.commands_3.6.0.I20100512-1500.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/org.eclipse.core.runtime_3.6.0.v20100505.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/org.eclipse.equinox.common_3.6.0.v20100503.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/voronoi.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jts-1.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gt-main-8.0-M1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gt-api-8.0-M1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gt-referencing-8.0-M1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,58 @@
+package beto.beans
+
+import com.vividsolutions.jts.algorithm.ConvexHull
+import com.vividsolutions.jts.geom.{Coordinate, Geometry, Point, GeometryFactory}
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: jtomin
+ * Date: 04.10.11
+ * Time: 16:23
+ * To change this template use File | Settings | File Templates.
+ */
+
+class ConvexPolygon(val dpoints: List[DPoint], val geomfact: GeometryFactory)
+  extends ConvexHull(dpoints.map(_.coordinate).toArray, geomfact) {
+
+  lazy val convexHull = dpoints match {
+    case List(a) => a.geometry
+    case List(_, _) => getConvexHull // TODO bilde Rechteck
+    case List(_, _*) => getConvexHull
+    case Nil => throw new RuntimeException("Konvexe Hülle enthält keine Punkte!")
+  }
+
+  def contains(p: DPoint): Boolean = convexHull.contains(p.geoPoint)
+
+  def contains(p: Coordinate): Boolean = coordinates.contains(p)
+
+  def touches(p: DPoint): Boolean = convexHull.touches(p.geoPoint)
+
+  def touches(g: Geometry): Boolean = convexHull.touches(g)
+
+  def getCentroid: Point = convexHull.getCentroid
+
+  def intersection(o: Geometry): Geometry = convexHull.intersection(o)
+
+  def union(o: Geometry): Geometry = convexHull.union(o)
+
+  def union(o: ConvexPolygon): Geometry = convexHull.union(o.convexHull)
+
+  def coordinates: Array[Coordinate] = {
+    if (convexHull.getCoordinates.size > 2)
+      convexHull.getCoordinates.tail
+    else
+      convexHull.getCoordinates
+  }
+
+
+  def getNumGeometries: Int = convexHull.getNumGeometries
+
+  def getGeometryN(n: Int): Geometry = convexHull.getGeometryN(n)
+
+  override def toString: String = {
+    var str = ""
+    coordinates.foreach(str += _.toString + "  ")
+    str
+  }
+
+}
