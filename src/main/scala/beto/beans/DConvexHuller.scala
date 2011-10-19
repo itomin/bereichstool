@@ -71,15 +71,18 @@ object DConvexHuller extends Logger {
       } else {
         val (left, rest, right) = divideVertical(choosen, foreign.head)
         val (leftForeign, restForeign, rightForeign) = divideVertical(foreign, foreign.head)
-        val verConv = convexVertical(hull(left), left, leftForeign) ::: convexVertical(hull(right), right, rightForeign)
-        val horConv = if (!rest.isEmpty) convexHorizontal(hull(rest), rest, restForeign) else List.empty[ConvexPolygon]
+
+        val leftSet = if (!left.isEmpty) convexVertical(hull(left), left, leftForeign) else Nil
+        val rightSet = if (!right.isEmpty) convexVertical(hull(right), right, rightForeign) else Nil
+
+        val verConv = leftSet ::: rightSet
+        val horConv = if (!rest.isEmpty) convexHorizontal(hull(rest), rest, restForeign) else Nil
+
         verConv ::: horConv
       }
     }
 
-    val geos = convexVertical(convGeo, choosen, foreignPoints)
-    debug("count geos: %s".format(geos.size))
-    geos
+    convexVertical(convGeo, choosen, foreignPoints)
   }
 
   private def hull(set: List[DPoint]): ConvexPolygon = {

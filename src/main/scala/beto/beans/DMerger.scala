@@ -26,31 +26,7 @@ object DMerger extends Logger {
   }
 
 
-  def mergePolygon(a: ConvexPolygon, b: ConvexPolygon): Geometry = {
-
-    /*    val (fp1, fp2) = facingPoints(a, b)
-    val (from, to) = connection((a, fp1), (b, fp2))
-    val foreign = foreignPoints(a, b)
-
-    val geo = (from, to) match {
-      case (List(a), List(b)) => line(a, b)
-      case (List(_, _*), List(_, _*)) => tetragon(from.head, from.last, to.last, to.head)
-      case (_, _) => throw new Exception("Verbindung zwischen den konvexen Hüllen konnte nicht gefunden werden!")
-    }*/
-
-    val geo = connection(a, b)
-    val foreign = foreignPoints(a, b)
-
-    if (foreign.exists(p => geo.intersects(p.geoPoint) || geo.touches(p.geoPoint)))
-      bend(geo, foreign)
-    else
-      geo
-  }
-
-
-  private def bend(geo: Geometry, foreign: List[DPoint]): Geometry = {
-    geo
-  }
+  def mergingGeo(a: ConvexPolygon, b: ConvexPolygon): Geometry = connection(a, b)
 
   /**
    * Sucht nach allen umgebenen Punkten, die zwischen zwei konvexen Polygonen liegen
@@ -62,11 +38,10 @@ object DMerger extends Logger {
     all.diff(choosen)
   }
 
-
   /**
    * Sucht optimale Verbindungsstelle zwischen zwei konvexen Polygonen
    */
-  def connection(a: ConvexPolygon, b: ConvexPolygon): Geometry = {
+  private def connection(a: ConvexPolygon, b: ConvexPolygon): Geometry = {
 
     val foreign: List[DPoint] = foreignPoints(a, b)
     val (aRand, bRand) = a.randPoints(b)
@@ -79,15 +54,15 @@ object DMerger extends Logger {
     def find(upper: Pair[Coordinate, Coordinate],
              lower: Pair[Coordinate, Coordinate]): Pair[Option[Geometry], Option[Geometry]] = {
 
-      debug("upper: %s %s".format(upper._1, upper._2))
-      debug("lower: %s %s".format(lower._1, lower._2))
+      /*debug("upper: %s %s".format(upper._1, upper._2))
+      debug("lower: %s %s".format(lower._1, lower._2))*/
 
       val area = tetragon(upper._1, upper._2, lower._2, lower._1)
       val diff = foreign.filter(e => area.intersects(e.puffer))
       val upperDist = upper._1.distance(upper._2)
       val lowerDist = lower._1.distance(lower._2)
 
-      debug("diff: %s ;  %s  &&  %s".format(diff.isEmpty, upperDist >= minRadius, lowerDist >= minRadius))
+      //debug("diff: %s ;  %s  &&  %s".format(diff.isEmpty, upperDist >= minRadius, lowerDist >= minRadius))
 
       if (!diff.isEmpty) {
         if (upperDist >= minRadius && lowerDist >= minRadius) {

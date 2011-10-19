@@ -36,6 +36,8 @@ class DPoint(val spoint: SPoint)
 
   def area(r: Double): Double = math.pow(r, 2) * math.Pi
 
+  def union(o: DPoint) = geometry.union(o.geometry)
+
   def print = {
     edges.foreach{
       e =>

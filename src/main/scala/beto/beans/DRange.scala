@@ -2,13 +2,7 @@ package beto.beans
 
 import view.Element
 import view.Range
-import java.awt.Shape
-import java.awt.geom.Ellipse2D
-import com.vividsolutions.jts.awt.ShapeWriter
 import com.vividsolutions.jts.geom.{Coordinate, Geometry}
-import com.vividsolutions.jts.algorithm.ConvexHull
-import org.geotools.geometry.jts.JTS
-import com.vividsolutions.jts.triangulate.quadedge.Vertex
 
 
 /**
@@ -23,7 +17,8 @@ class DRange(val rangeView: Range) extends DElement {
 
   import DElement._
   import DConvexHuller._
-  import DMerger._
+  import Kruskal._
+
 
   private var children = List[DElement]()
 
@@ -70,11 +65,27 @@ class DRange(val rangeView: Range) extends DElement {
 
   private def spline(geo: Geometry): Geometry = geo
 
+  private def merge(convexSet: List[ConvexPolygon]): Geometry = {
+    def mergeRecursive(set: List[Geometry]): Geometry = set match {
+      case List(a) => a
+      case List(a, b, _*) => mergeRecursive(a.union(b) :: set.drop(2))
+      case Nil => throw new RuntimeException("Diese Fehler sollte nie aufgerufen werden!\nIrgendwie ist die Bereich verloren gegangen!")
+    }
 
-  private def merge(convexSet: List[ConvexPolygon]): Geometry = convexSet match {
-    case List(a) => a.convexHull
-    case List(a, b, _*) => mergePolygon(a, b) //TODO finde den nächst liegenden
-    case _ => throw new Exception("")
+    convexSet match {
+      case List(a) => a.convexHull
+      case List(a, b) => a.union(b).union(a.merge(b))
+      case List(a, _*) => {
+        val ordered = order(convexSet)
+        mergeRecursive(ordered.map(p => p._1.union(p._2).union(p._1.merge(p._2))))
+      }
+      case _ => throw new Exception("")
+    }
+  }
+
+  private def order(convexSet: List[ConvexPolygon]) = {
+    val edges = for (i <- convexSet; j <- convexSet if i != j) yield (Edge(i, j, i.distance(j)))
+    kruskal(edges).toList.map(e => (e.v1, e.v2))
   }
 
   private def optimize(origGeo: Geometry): Geometry = {
@@ -105,32 +116,13 @@ class DRange(val rangeView: Range) extends DElement {
     /* var diff = meanArea - origGeo.getArea
     if (diff > 10) {
       /*  val unimprovEdges = edges.filter(_.improvable == false)
-   val improvEdges = unimprovEdges.*/
+    val improvEdges = unimprovEdges.*/
       origGeo
     } else {
       origGeo
     }*/
     newGeo
   }
-
-  /*private def merge(convexSet: List[Geometry], set: List[DElement]): Geometry = {
-
-
-    def mergeConvex(list: List[Geometry]):Geometry = {
-      val src = list.head
-      val target = list.tail.minBy(g => src.distance(g))
-           src
-
-    }
-
-    def mergeAll(list: List[Geometry], geo: Geometry): Geometry = list match {
-      case List(a) => a.union(geo)
-      case List(a, _*) => mergeAll(list.tail, a.union(geo))
-      case List() => throw new RuntimeException("Bereich hat keine Punkte und kann daher nicht visualisiert werden")
-    }
-
-    mergeAll(set.map(_.geometry), mergeConvex(convexSet))
-  }*/
 
 
   private def cut(neigh: List[Geometry], geo: Geometry): Geometry = neigh match {

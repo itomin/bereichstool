@@ -90,9 +90,8 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
   /* Durchschnittsradius berechnen (harmonischer Mitterlwert)*/
   lazy val relEdges = edges.filter(e => e.orig.isInstanceOf[DPoint] && e.dest.isInstanceOf[DPoint])
 
-  // averageEdges.foreach(e => debug("1 / %s = %s".format(e.length.toInt, 1.0d / e.length.toInt)))
   DElement.meanRadius = (relEdges.size / relEdges.map(e => 1.0d / e.length.toInt).sum) / 2
-  DElement.minRadius = DElement.meanRadius / 4 //relEdges.minBy(e => e.length.toInt).length / 4
+  DElement.minRadius = if (DElement.meanRadius / 3 < 20) 20 else DElement.meanRadius / 3
 
   DConvexHuller.createInstance(this)
   DMerger.createInstance(this)
