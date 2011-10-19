@@ -51,7 +51,7 @@ object DConvexHuller extends Logger {
     /* Vertikale Teilung */
     def convexVertical(conv: ConvexPolygon, choosen: List[DPoint], foreign: List[DPoint]): List[ConvexPolygon] = {
 
-      val pointsInPolygon: List[DPoint] = foreign.filter(p => conv.contains(p) || conv.touches(p))
+      val pointsInPolygon: List[DPoint] = foreign.filter(p => conv.intersects(p))
 
       /* Horizontale Teilung */
       def convexHorizontal(conv: ConvexPolygon, choosen: List[DPoint], foreign: List[DPoint]): List[ConvexPolygon] = {

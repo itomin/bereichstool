@@ -49,7 +49,7 @@ class DRange(val rangeView: Range) extends DElement {
 
   def leafs: List[DPoint] = children.flatMap{
     el => el match {
-      case el: DPoint => List(el)
+      case el: DPoint => el :: Nil
       case el: DRange => el.leafs
     }
   }
@@ -66,6 +66,7 @@ class DRange(val rangeView: Range) extends DElement {
   private def spline(geo: Geometry): Geometry = geo
 
   private def merge(convexSet: List[ConvexPolygon]): Geometry = {
+    debug("convexSet: %s".format(convexSet.size))
     def mergeRecursive(set: List[Geometry]): Geometry = set match {
       case List(a) => a
       case List(a, b, _*) => mergeRecursive(a.union(b) :: set.drop(2))
@@ -73,17 +74,17 @@ class DRange(val rangeView: Range) extends DElement {
     }
 
     convexSet match {
-      case List(a) => a.convexHull
-      case List(a, b) => a.union(b).union(a.merge(b))
+      case List(a) => a.conkavHull union a.convexHull
+      case List(a, b) => a union b union a.merge(b)
       case List(a, _*) => {
         val ordered = order(convexSet)
-        mergeRecursive(ordered.map(p => p._1.union(p._2).union(p._1.merge(p._2))))
+        mergeRecursive(ordered.map(p => p._1 union p._2 union p._1.merge(p._2)))
       }
       case _ => throw new Exception("")
     }
   }
 
-  private def order(convexSet: List[ConvexPolygon]) = {
+  private def order(convexSet: List[ConvexPolygon]): List[Pair[ConvexPolygon, ConvexPolygon]] = {
     val edges = for (i <- convexSet; j <- convexSet if i != j) yield (Edge(i, j, i.distance(j)))
     kruskal(edges).toList.map(e => (e.v1, e.v2))
   }

@@ -38,6 +38,7 @@ object DMerger extends Logger {
     all.diff(choosen)
   }
 
+
   /**
    * Sucht optimale Verbindungsstelle zwischen zwei konvexen Polygonen
    */
@@ -70,14 +71,14 @@ object DMerger extends Logger {
           val (ll, rl) = div(lower._1, lower._2)
 
           val left: Option[Geometry] = find(lu, ll) match {
-            case (Some(a), Some(b)) => Some(List(a, b).minBy(_.getArea))
+            case (Some(a), Some(b)) => Some(List(a, b).maxBy(_.getArea))
             case (Some(a), None) => Some(a)
             case (None, Some(b)) => Some(b)
             case (None, None) => None
           }
 
           val right: Option[Geometry] = find(ru, rl) match {
-            case (Some(a), Some(b)) => Some(List(a, b).minBy(_.getArea))
+            case (Some(a), Some(b)) => Some(List(a, b).maxBy(_.getArea))
             case (Some(a), None) => Some(a)
             case (None, Some(b)) => Some(b)
             case (None, None) => None
@@ -92,7 +93,7 @@ object DMerger extends Logger {
     }
 
     find(aRand, bRand) match {
-      case (Some(a), Some(b)) => List(a, b).minBy(_.getArea)
+      case (Some(a), Some(b)) => List(a, b).maxBy(_.getArea)
       case (Some(a), None) => a
       case (None, Some(b)) => b
       case (None, None) => List(line(aRand._1, bRand._1), line(aRand._2, bRand._2)).minBy(_.getLength)

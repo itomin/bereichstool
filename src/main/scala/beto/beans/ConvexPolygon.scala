@@ -13,12 +13,26 @@ import com.vividsolutions.jts.geom.{Coordinate, Geometry, Point, GeometryFactory
  */
 
 class ConvexPolygon(val dpoints: List[DPoint], val geomfact: GeometryFactory)
-  extends ConvexHull(dpoints.flatMap(_.geometry.getCoordinates).toArray, geomfact) with Logger {
+  extends ConvexHull(dpoints.map(_.coordinate).toArray, geomfact) with Logger {
 
   import DGeometry._
   import DMerger._
 
-  lazy val convexHull = getConvexHull
+  lazy val convexHull: Geometry = dpoints match {
+    case List(a) => a.geometry
+    case List(a, b) => new ConvexHull(a.geometry.getCoordinates ++ b.geometry.getCoordinates, geomfact).getConvexHull
+    case List(_, _*) => getConvexHull
+    case List() => throw new Exception("Polygon enthält keine Punkte!")
+  }
+
+  lazy val conkavHull: Geometry = {
+    def mergePoints(points: List[Geometry]): Geometry = points match {
+      case List(a) => a
+      case List(a, b, _*) => mergePoints(a.union(b) :: points.drop(2))
+      case List() => throw new Exception("Polygon enthält keine Punkte!")
+    }
+    mergePoints(dpoints.map(p => p.geometry))
+  }
 
   def contains(p: DPoint): Boolean = convexHull.contains(p.geoPoint)
 
@@ -34,16 +48,18 @@ class ConvexPolygon(val dpoints: List[DPoint], val geomfact: GeometryFactory)
 
   def intersection(o: Geometry): Geometry = convexHull.intersection(o)
 
-  def interscets(o: Geometry): Boolean = convexHull.intersects(o)
+  def intersects(p: DPoint):Boolean = convexHull.intersects(p.puffer)
 
-  def interscets(o: ConvexPolygon): Boolean = convexHull.intersects(o.convexHull)
+  def intersects(o: Geometry): Boolean = convexHull.intersects(o)
+
+  def intersects(o: ConvexPolygon): Boolean = convexHull.intersects(o.convexHull)
 
   def union(o: Geometry): Geometry = convexHull.union(o)
 
   def union(o: ConvexPolygon): Geometry = convexHull.union(o.convexHull)
 
   def distance(other: ConvexPolygon): Double = {
-    if (this.touches(other) || this.interscets(other))
+    if (this.touches(other) || this.intersects(other))
       0
     else
       (for (i <- other.coordinates; j <- coordinates) yield (i.distance(j))).min
@@ -86,9 +102,6 @@ class ConvexPolygon(val dpoints: List[DPoint], val geomfact: GeometryFactory)
        * Konvexe Polygone dürfe nur an max. zwei Stellen verschmolzen werden, um wieder
        * eine konvexe Form zu bilden.
        */
-      erg foreach {
-        s => debug(s.toString)
-      }
       if (erg.size != 2) throw new RuntimeException("Fehler bei der Ermittlung von Verbindungstangenten der Polygone")
 
       // Randpunkte der jeweiligen Polygone zuordnen
@@ -120,8 +133,7 @@ class ConvexPolygon(val dpoints: List[DPoint], val geomfact: GeometryFactory)
   }
 
   def merge(other: ConvexPolygon): Geometry = {
-    debug("merge %s and  %s".format(this, other))
-    mergingGeo(this, other)
+    mergingGeo(this, other) union conkavHull union other.conkavHull
   }
 
   override def toString: String = {
