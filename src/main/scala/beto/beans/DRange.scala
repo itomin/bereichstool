@@ -2,8 +2,8 @@ package beto.beans
 
 import view.Element
 import view.Range
-import com.vividsolutions.jts.geom.{Coordinate, Geometry}
-
+import com.vividsolutions.jts.algorithm.ConvexHull
+import com.vividsolutions.jts.geom._
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,12 +13,25 @@ import com.vividsolutions.jts.geom.{Coordinate, Geometry}
  * To change this template use File | Settings | File Templates.
  */
 
+object DRange {
+  implicit def geometryDistance(a: Geometry) = new {
+    def distance(b: Geometry): Double = {
+      if (a.touches(b) || a.intersects(b))
+        0
+      else
+        (for (i <- a.getCoordinates; j <- b.getCoordinates) yield (i.distance(j))).min
+    }
+  }
+}
+
 class DRange(val rangeView: Range) extends DElement {
 
-  import DElement._
-  import DConvexHuller._
   import Kruskal._
+  import DElement._
+  import DMerger._
+  import DGeometry._
 
+  type ELL = Either[List[DPoint], List[Geometry]]
 
   private var children = List[DElement]()
 
@@ -28,8 +41,6 @@ class DRange(val rangeView: Range) extends DElement {
   lazy val areaOptimal = children.map(_.areaOptimal).sum
 
   var geometry: Geometry = _
-
-  def isLeaf = children.isEmpty
 
   def exists(e: DElement): Boolean = children.contains(e)
 
@@ -56,36 +67,111 @@ class DRange(val rangeView: Range) extends DElement {
 
 
   def visualize = {
-    val list = hackfleisch(children)
-    geometry = merge(list)
+
+    val points = children collect {
+      case d: DPoint => d
+    }
+
+    geometry = if (isConvex)
+      new ConvexHull(points map (p => p.coordinate) toArray, new GeometryFactory).getConvexHull
+    else
+      merge(points)
+
     rangeView.deform(shapeWriter.toShape(geometry))
   }
 
-  def print(): Unit = println("")
+
+  private def isConvex = false
 
   private def spline(geo: Geometry): Geometry = geo
 
-  private def merge(convexSet: List[ConvexPolygon]): Geometry = {
-    debug("convexSet: %s".format(convexSet.size))
-    def mergeRecursive(set: List[Geometry]): Geometry = set match {
-      case List(a) => a
-      case List(a, b, _*) => mergeRecursive(a.union(b) :: set.drop(2))
-      case Nil => throw new RuntimeException("Diese Fehler sollte nie aufgerufen werden!\nIrgendwie ist die Bereich verloren gegangen!")
+  private def merge(list: List[DPoint]): Geometry = {
+
+    var lastCount = list.size
+
+    def join(list: List[Geometry]): Geometry = {
+
+      /*******************************************************************
+       *
+       *        Suche Verbindung zwischen zwei Polygonen
+       *
+       *******************************************************************/
+      def connect(a: Geometry, b: Geometry): Geometry = {
+        connection(a, b) match {
+          case ls: LineString => emptyGeometry
+          case a: Geometry => a
+        }
+      }
+
+      /*******************************************************************
+       *
+       *        Verbinde rekursiv alle Polygone zu einem Bereich
+       *
+       *******************************************************************/
+      def mergeAll(set: List[Geometry]): Geometry = set match {
+        case List(a) => a
+        case List(a, b, _*) => mergeAll(a.union(b) :: set.drop(2))
+        case Nil => throw new RuntimeException("Diese Fehler sollte nie aufgerufen werden!" +
+          "\nIrgendwie ist die Bereich verloren gegangen!")
+      }
+
+      /*******************************************************************
+       *
+       *  Verbinde alle Polygone paarweise
+       *
+       *******************************************************************/
+      def mergePaired(list: List[Geometry]): List[Geometry] = {
+        mst(list) map (p => p._1 union p._2 union connect(p._1, p._2))
+      }
+
+      /*******************************************************************
+       *
+       *  Merge alle Polygone
+       *
+       *******************************************************************/
+      val erg = list match {
+        case List(a) => a
+        case List(_, _*) => mergeAll(mergePaired(list))
+        case _ => throw new Exception("")
+      }
+
+      /*******************************************************************
+       *
+       *  Prüfe Zusammenhang der entstandenen Topologie
+       *
+       *******************************************************************/
+      if (erg.getNumGeometries > 1)
+        if (erg.getNumGeometries < lastCount) {
+          lastCount = erg.getNumGeometries
+          val geos = for (i <- 0 to erg.getNumGeometries - 1) yield (erg.getGeometryN(i))
+          join(geos.toList)
+        } else {
+          erg //TODO auf die harte Tour
+        }
+      else
+        erg
+
+
     }
 
-    convexSet match {
-      case List(a) => a.conkavHull union a.convexHull
-      case List(a, b) => a union b union a.merge(b)
-      case List(a, _*) => {
-        val ordered = order(convexSet)
-        mergeRecursive(ordered.map(p => p._1 union p._2 union p._1.merge(p._2)))
-      }
-      case _ => throw new Exception("")
-    }
+    join(list map (_.geometry))
+
+
+    /*******************************************************************
+     *
+     *  Enthält Topologie Löcher, dann schließe diese
+     *
+     *******************************************************************/
+
+    /*erg match {
+      case d: Polygon => debug("%s".format(polygon(get)))
+      case _ => erg
+    }*/
+
   }
 
-  private def order(convexSet: List[ConvexPolygon]): List[Pair[ConvexPolygon, ConvexPolygon]] = {
-    val edges = for (i <- convexSet; j <- convexSet if i != j) yield (Edge(i, j, i.distance(j)))
+  private def mst(list: List[Geometry]): List[Pair[Geometry, Geometry]] = {
+    val edges = for (i <- list; j <- list if i != j) yield (Edge(i, j, i.distance(j)))
     kruskal(edges).toList.map(e => (e.v1, e.v2))
   }
 
@@ -95,10 +181,9 @@ class DRange(val rangeView: Range) extends DElement {
     *  und beschneide die Bereichsfläche, falls dies der Falls
     */
 
-    var newGeo = cut(neighbours.map(_.geometry), origGeo)
-    val actArea = newGeo.getArea
-    val diff = actArea - areaOptimal
-
+    /*var newGeo = cut(neighbours.map(_.geometry), origGeo)
+val actArea = newGeo.getArea
+val diff = actArea - areaOptimal*/
 
 
     /*    edges.foreach{
@@ -122,16 +207,7 @@ class DRange(val rangeView: Range) extends DElement {
     } else {
       origGeo
     }*/
-    newGeo
-  }
-
-
-  private def cut(neigh: List[Geometry], geo: Geometry): Geometry = neigh match {
-    case List() => geo
-    case List(a, _*) => if (geo.intersects(a))
-      cut(neigh.tail, geo.difference(a))
-    else
-      cut(neigh.tail, geo)
+    origGeo
   }
 
   private def neighbours: List[DPoint] = {

@@ -15,40 +15,53 @@ import com.vividsolutions.jts.geom.{Coordinate, GeometryFactory, Geometry}
 
 object DElement {
 
-  lazy val shapeWriter = new ShapeWriter
 
-  lazy val geomfact = new GeometryFactory
+  lazy val shapeWriter = new ShapeWriter
 
   /* Durchschnittsradius berechnen (harmonischer Mitterlwert)*/
   var meanRadius: Double = _
 
   var minRadius: Double = _
 
-  def toCircle(x: Int, y: Int, radius: Double): Geometry = {
 
-    val sides = 32
-
-    var coords = (0 to sides).map{
-      i =>
-        val angle = (i.toDouble / sides.toDouble) * math.Pi * 2.0
-        val dx = math.cos(angle) * radius
-        val dy = math.sin(angle) * radius
-        new Coordinate(x + dx, y + dy)
-    }
-
-    coords = coords :+ coords.head
-
-    geomfact.createPolygon(geomfact.createLinearRing(coords.toArray), null)
-  }
 }
+
 
 trait DElement extends Logger {
 
   import DElement._
+  import DGeometry._
 
   def geometry: Geometry
 
   val areaOptimal: Double
 
-  def print
+  def touches(o: DElement): Boolean = geometry.touches(o.geometry)
+
+  def touches(o: Geometry): Boolean = geometry.touches(geometry)
+
+  def touches(c: Coordinate): Boolean = geometry.touches(point(c))
+
+  def union(o: DElement): Geometry = geometry.union(o.geometry)
+
+  def union(o: Geometry): Geometry = geometry.union(geometry)
+
+  def intersects(o: DElement): Boolean = geometry.intersects(o.geometry)
+
+  def intersects(o: Geometry): Boolean = geometry.intersects(geometry)
+
+  def coordinates: List[Coordinate] = geometry.getCoordinates.toList
+
+  def getArea: Double = geometry.getArea
+
+  def distance(o: DElement): Double = {
+    //debug("%s - %s t: %s  i: %s".format(this.toString, o.toString, this.touches(o), this.intersects(o)))
+    if (this.touches(o) || this.intersects(o))
+      0
+    else
+      (for (i <- coordinates; j <- o.coordinates) yield (i.distance(j))).min
+  }
+
+  def contains(c: Coordinate): Boolean = geometry.contains(point(c))
+
 }

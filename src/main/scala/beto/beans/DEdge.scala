@@ -13,10 +13,10 @@ import com.vividsolutions.jts.triangulate.quadedge.{Vertex, QuadEdge}
  */
 
 
-
 class DEdge(val origEdge: QuadEdge) {
 
   import DElement._
+  import DGeometry._
 
   private lazy val angles = new HashMap[Vertex, Int]()
   private lazy val lNext: HashMap[Vertex, DEdge] = new HashMap[Vertex, DEdge]()
@@ -59,13 +59,14 @@ class DEdge(val origEdge: QuadEdge) {
 
   def dNext: QuadEdge = origEdge.dNext
 
-  def radius: Double = {
-    if (improvable) {
-      meanRadius + factor
-    } else {
-      1.0 / 2.0 * length
-    }
+  def radius(center: DPoint): Double = {
+    val ed = getLNext(center) :: getRNext(center) :: this :: Nil
+    val ne = ed filter (e => (e.angle(center) - angle(center)).abs < 35)
+    val me = ne minBy (e => e.minRadius)
+    me.minRadius
   }
+
+  def minRadius = if (improvable) meanRadius + factor else 1.0 / 2.0 * length
 
   override def equals(other: Any): Boolean = {
     other match {

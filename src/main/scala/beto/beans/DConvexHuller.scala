@@ -12,7 +12,7 @@ import com.vividsolutions.jts.geom.{GeometryFactory, Coordinate, Geometry}
  * To change this template use File | Settings | File Templates.
  */
 
-object DConvexHuller extends Logger {
+/*object DConvexHuller extends Logger {
 
   var dGraph: DelaunayGraph = _
   lazy val dPoints: List[DPoint] = dGraph.dpoints
@@ -48,12 +48,17 @@ object DConvexHuller extends Logger {
 
     val foreignPoints: List[DPoint] = dGraph.filter(maxX, minX, maxY, minY).diff(set)
 
-    /* Vertikale Teilung */
+
+
+
+
+
+   */ /* Vertikale Teilung
     def convexVertical(conv: ConvexPolygon, choosen: List[DPoint], foreign: List[DPoint]): List[ConvexPolygon] = {
 
       val pointsInPolygon: List[DPoint] = foreign.filter(p => conv.intersects(p))
 
-      /* Horizontale Teilung */
+       Horizontale Teilung
       def convexHorizontal(conv: ConvexPolygon, choosen: List[DPoint], foreign: List[DPoint]): List[ConvexPolygon] = {
 
         val pointsOnLine: List[DPoint] = foreign.filter(p => conv.contains(p))
@@ -101,7 +106,7 @@ object DConvexHuller extends Logger {
   }
 
 
-}
+}*/
 
 
 

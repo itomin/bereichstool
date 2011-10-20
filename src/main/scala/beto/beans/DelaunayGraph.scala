@@ -93,7 +93,6 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
   DElement.meanRadius = (relEdges.size / relEdges.map(e => 1.0d / e.length.toInt).sum) / 2
   DElement.minRadius = if (DElement.meanRadius / 3 < 20) 20 else DElement.meanRadius / 3
 
-  DConvexHuller.createInstance(this)
   DMerger.createInstance(this)
 
   /*  */
@@ -102,9 +101,7 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
     range.visualize
   }
 
-  def filter(maxX: Double, minX: Double, maxY: Double, minY: Double): List[DPoint] = {
-    dpoints.filter(p => p.getX <= maxX && p.getX >= minX && p.getY <= maxY && p.getY >= minY)
-  }
+
 
   def getBounds(geo: Geometry): Tuple4[Double, Double, Double, Double] = {
     val sortByX = geo.getCoordinates.sortWith((a, b) => a.x < b.x)

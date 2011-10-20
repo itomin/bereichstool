@@ -11,16 +11,20 @@ import com.vividsolutions.jts.geom.{LineString, GeometryFactory, Geometry, Coord
 class DPoint(val spoint: SPoint)
   extends ConstraintVertex(new Coordinate(spoint.p.scaledX, spoint.p.scaledY)) with DElement {
 
+  import DGeometry._
   import DElement._
 
-  lazy val geometry = toPolygon(x, y)
-  lazy val puffer = toCircle(x, y, minRadius)
-  lazy val areaOptimal = toCircle(x, y, meanRadius).getArea
+  lazy val geometry = optimize(neighbours, toPolygon(x, y))
+  lazy val puffer = circle(x, y, minRadius)
+  lazy val areaOptimal = circle(x, y, meanRadius).getArea
 
   lazy val x = spoint.p.scaledX
   lazy val y = spoint.p.scaledY
   lazy val coordinate = new Coordinate(x, y)
   lazy val geoPoint = geomfact.createPoint(coordinate)
+  lazy val neighbours = edges map (e => e.otherPoint(this)) collect {
+    case d: DPoint => d
+  }
 
   var edges: List[DEdge] = List[DEdge]()
 
@@ -30,29 +34,25 @@ class DPoint(val spoint: SPoint)
 
   def eachEdge(f: DEdge => Unit) = edges.foreach(e => f(e))
 
-  def addEdge(e: DEdge) = {
-    edges ::= e
-  }
+  def addEdge(e: DEdge) = edges ::= e
 
-  def area(r: Double): Double = math.pow(r, 2) * math.Pi
-
-  def union(o: DPoint) = geometry.union(o.geometry)
-
-  def print = {
-    edges.foreach{
-      e =>
-        debug("%s -> %s".format(e.toString, e.getLNext(this).toString))
-    }
-  }
 
   override def toString = "<%s, %s>".format(x, y)
+
+  private def optimize(list: List[DPoint], pol: Geometry): Geometry = list match {
+    case List() => pol
+    case List(_, _*) => if (pol.intersects(list.head.puffer))
+      optimize(list.tail, pol.difference(list.head.puffer))
+    else
+      optimize(list.tail, pol)
+  }
 
   private def toPolygon(x: Double, y: Double): Geometry = {
 
     /* Kanten nach Winkel aufsteigend sortiert */
     val sortedEdges: List[DEdge] = edges.sortWith((a, b) => a.angle(this) < b.angle(this))
 
-    /* Kreis ist in Wirklichkeit ein Polygon mit 32 Seiten */
+    /* Kreis ist in Wirklichkeit ein Polygon mit 24 Seiten */
     val sides = 24
 
     /* Minimaler Winkel fungiert als Laufindex */
@@ -65,8 +65,8 @@ class DPoint(val spoint: SPoint)
         val nEdge = edge.getLNext(this)
         val endPhi: Int = nEdge.angle(this)
 
-        val startRadius: Double = edge.radius
-        val endRadius: Double = nEdge.radius
+        val startRadius: Double = edge.radius(this)
+        val endRadius: Double = nEdge.radius(this)
 
         val phiDiff = if (sortedEdges.last == edge)
           360 - (startPhi - endPhi).abs
@@ -77,13 +77,13 @@ class DPoint(val spoint: SPoint)
         val deltaRadius: Double = if (steps != 0) (startRadius - endRadius) / steps else 0
 
         /* debug("%s (%s, %s) ".format(edge, edge.length, startPhi))
-           debug("%s (%s, %s) ".format(nEdge, nEdge.length, endPhi))
-           debug("startRadius: %s".format(startRadius))
-           debug("endRadius: %s".format(endRadius))
-           debug("startPhi: %s".format(startPhi))
-           debug("endPhi: %s".format(endPhi))
-           debug("steps: %s".format(steps))
-           debug("deltaRadius: %s".format(deltaRadius))*/
+       debug("%s (%s, %s) ".format(nEdge, nEdge.length, endPhi))
+       debug("startRadius: %s".format(startRadius))
+       debug("endRadius: %s".format(endRadius))
+       debug("startPhi: %s".format(startPhi))
+       debug("endPhi: %s".format(endPhi))
+       debug("steps: %s".format(steps))
+       debug("deltaRadius: %s".format(deltaRadius))*/
 
         var radius = startRadius
         var phi = startPhi

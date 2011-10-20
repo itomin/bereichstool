@@ -39,4 +39,32 @@ object DGeometry {
   def line(a: Coordinate, b: Coordinate): LineString = {
     geomfact.createLineString(Array(a, b))
   }
+
+  /**...
+   *
+   */
+  def circle(x: Int, y: Int, radius: Double): Geometry = {
+
+    val sides = 32
+
+    var coords = (0 to sides).map{
+      i =>
+        val angle = (i.toDouble / sides.toDouble) * math.Pi * 2.0
+        val dx = math.cos(angle) * radius
+        val dy = math.sin(angle) * radius
+        new Coordinate(x + dx, y + dy)
+    }
+
+    coords = coords :+ coords.head
+
+    geomfact.createPolygon(geomfact.createLinearRing(coords.toArray), null)
+  }
+
+  /**
+   *
+   */
+  def emptyGeometry = {
+    geomfact.createPolygon(geomfact.createLinearRing(Array[Coordinate]()), null)
+  }
+
 }

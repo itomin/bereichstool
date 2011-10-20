@@ -1,7 +1,8 @@
 package beto.beans
 
 import _root_.beto.log.Logger
-import com.vividsolutions.jts.geom.{Coordinate, Geometry, LineString}
+import com.vividsolutions.jts.algorithm.ConvexHull
+import com.vividsolutions.jts.geom.{Point, Coordinate, Geometry, LineString}
 
 
 /**
@@ -14,6 +15,11 @@ import com.vividsolutions.jts.geom.{Coordinate, Geometry, LineString}
 
 object DMerger extends Logger {
 
+  type LDP = List[DPoint]
+  type PCC = Pair[Coordinate, Coordinate]
+  type C = Coordinate
+
+
   import DElement._
   import DGeometry._
 
@@ -21,49 +27,43 @@ object DMerger extends Logger {
   lazy val dpoints = dGraph.dpoints
   lazy val dranges = dGraph.dranges
 
+
   def createInstance(dg: DelaunayGraph) = {
     dGraph = dg
   }
 
 
-  def mergingGeo(a: ConvexPolygon, b: ConvexPolygon): Geometry = connection(a, b)
-
-  /**
-   * Sucht nach allen umgebenen Punkten, die zwischen zwei konvexen Polygonen liegen
-   */
-  private def foreignPoints(a: ConvexPolygon, b: ConvexPolygon): List[DPoint] = {
-    val choosen = a.dpoints.union(b.dpoints)
-    val (maxX: Double, minX: Double, maxY: Double, minY: Double) = dGraph.getBounds(a.convexHull.union(b.convexHull))
-    val all: List[DPoint] = dGraph.filter(maxX, minX, maxY, minY)
-    all.diff(choosen)
-  }
-
+  /*def countIntersected(a: DPoint, b: DPoint): Int = {
+    val f = foreign(a.geometry, b.geometry)
+    val (aRand: PCC, bRand: PCC) = randPoints(a.geometry, b.geometry)
+    val area = tetragon(aRand._1, aRand._2, bRand._2, bRand._1)
+    f.filter(e => area.intersects(e.puffer)).size
+  }*/
 
   /**
    * Sucht optimale Verbindungsstelle zwischen zwei konvexen Polygonen
    */
-  private def connection(a: ConvexPolygon, b: ConvexPolygon): Geometry = {
+  def connection(a: Geometry, b: Geometry): Geometry = {
 
-    val foreign: List[DPoint] = foreignPoints(a, b)
-    val (aRand, bRand) = a.randPoints(b)
+    //val f: LDP = foreign(a, b)
+    val (aRand: PCC, bRand: PCC) = randPoints(a, b)
 
-    def div(c1: Coordinate, c2: Coordinate): Pair[Pair[Coordinate, Coordinate], Pair[Coordinate, Coordinate]] = {
+    def div(c1: Coordinate, c2: Coordinate): Pair[PCC, PCC] = {
       val l = line(c1, c2)
       ((c1, l.getCentroid.getCoordinate), (l.getCentroid.getCoordinate, c2))
     }
 
-    def find(upper: Pair[Coordinate, Coordinate],
-             lower: Pair[Coordinate, Coordinate]): Pair[Option[Geometry], Option[Geometry]] = {
+    def find(upper: PCC, lower: PCC): Pair[Option[Geometry], Option[Geometry]] = {
 
       /*debug("upper: %s %s".format(upper._1, upper._2))
       debug("lower: %s %s".format(lower._1, lower._2))*/
 
       val area = tetragon(upper._1, upper._2, lower._2, lower._1)
-      val diff = foreign.filter(e => area.intersects(e.puffer))
+      val diff = foreign(a, b).filter(e => area.intersects(e.puffer))
       val upperDist = upper._1.distance(upper._2)
       val lowerDist = lower._1.distance(lower._2)
 
-      //debug("diff: %s ;  %s  &&  %s".format(diff.isEmpty, upperDist >= minRadius, lowerDist >= minRadius))
+      /*      debug("diff: %s ;  %s  &&  %s".format(diff.isEmpty, upperDist >= minRadius, lowerDist >= minRadius))*/
 
       if (!diff.isEmpty) {
         if (upperDist >= minRadius && lowerDist >= minRadius) {
@@ -93,12 +93,102 @@ object DMerger extends Logger {
     }
 
     find(aRand, bRand) match {
-      case (Some(a), Some(b)) => List(a, b).maxBy(_.getArea)
+      case (Some(a), Some(b)) => if (a touches b) a union b else List(a, b).maxBy(_.getArea)
       case (Some(a), None) => a
       case (None, Some(b)) => b
       case (None, None) => List(line(aRand._1, bRand._1), line(aRand._2, bRand._2)).minBy(_.getLength)
     }
 
+  }
+
+  private def getBounds(a: Geometry, b: Geometry): Tuple4[Double, Double, Double, Double] = {
+    val coords = (a.getCoordinates ++ b.getCoordinates)
+    val sortByX = coords sortWith ((a, b) => a.x < b.x)
+    val sortByY = coords sortWith ((a, b) => a.y < b.y)
+    (sortByX.last.x, sortByX.head.x, sortByY.last.y, sortByY.head.y)
+  }
+
+  private def filter(maxX: Double, minX: Double, maxY: Double, minY: Double): LDP = {
+    val boundArea = tetragon(new C(minX, minY), new C(minX, maxY), new C(maxX, maxY), new C(maxX, minY))
+    dpoints.filter(p => boundArea.contains(p.puffer) || boundArea.intersects(p.puffer))
+  }
+
+  /**
+   * Sucht nach allen umgebenen Punkten, die zwischen zwei konvexen Polygonen liegen
+   */
+  private def foreign(a: Geometry, b: Geometry): LDP = {
+    val (maxX: Double, minX: Double, maxY: Double, minY: Double) = getBounds(a, b)
+    val all = filter(maxX, minX, maxY, minY)
+    val choosen = all filter (p => a.contains(p.geoPoint) || b.contains(p.geoPoint))
+    all diff choosen
+  }
+
+
+  private def randPoints(a: Geometry, b: Geometry): Pair[PCC, PCC] = {
+
+    /**
+     * Lokalisiert die zugewandten Punkte zweier konvexen Polygone, um später eine
+     * optimale Verknüpfungsstelle zu bestimmen.
+     */
+    def locate(a: Geometry, b: Geometry): Pair[PCC, PCC] = {
+
+      /*debug("a:")
+  a.coordinates foreach (c => debug(c.toString))
+  debug("b:")
+  b.coordinates foreach (c => debug(c.toString))*/
+
+      /* Verschmelze die konvexen Hüllen zu einer konvexen Hülle */
+      val conv = new ConvexHull((a.getCoordinates ++ b.getCoordinates), geomfact).getConvexHull
+
+      /* Gib alle Koordinaten der Eckpunkte */
+      //val coords = conv.convexHull.getCoordinates
+      val coords = a.union(b).convexHull.getCoordinates
+
+      /* Bilde daraus Kanten. */
+      val edges = for (i <- 0 to coords.size - 2) yield ((point(coords(i)), point(coords(i + 1))))
+
+      /*debug("edges:")
+  edges foreach (c => debug(c.toString))*/
+
+      /* Bestimme Verschmelzungspunkte der Polygone a und b. */
+      val erg = edges.toList.filter{
+        e => (a.touches(e._1) && b.touches(e._2)) ||
+          (b.touches(e._1) && a.touches(e._2))
+      }
+
+      /*  debug("erg:") erg foreach (c => debug(c.toString))  */
+
+      /*
+      * Konvexe Polygone dürfe nur an max. zwei Stellen verschmolzen werden, um wieder
+      * eine konvexe Form zu bilden.
+      */
+      if (erg.size != 2) throw new RuntimeException("Fehler bei der Ermittlung von Verbindungstangenten der Polygone")
+
+      // Randpunkte der jeweiligen Polygone zuordnen
+      val aRand = erg flatMap (e => List(e._1, e._2)) filter (c => a.touches(c))
+      val bRand = erg flatMap (e => List(e._1, e._2)) filter (c => b.touches(c))
+
+      ((aRand.head.getCoordinate, aRand.last.getCoordinate), (bRand.head.getCoordinate, bRand.last.getCoordinate))
+    }
+
+    /**
+     *  Klappt die geordnete Liste der zugewandten Punkten um, falls diese
+     * über Kreuz liegen.
+     */
+    def turn(a: PCC, b: PCC): Pair[PCC, PCC] = {
+
+      val begin = line(a._1, b._1)
+      val end = line(a._2, b._2)
+
+      if (begin.intersects(end))
+        (a, (b._2, b._1))
+      else
+        (a, b)
+    }
+
+    // gegenüberliegende Eckpunkte der Polygone a und b
+    val (aRand, bRand) = locate(a, b)
+    turn(aRand, bRand)
   }
 
 
