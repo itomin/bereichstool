@@ -66,18 +66,13 @@ class GraphEditor(val aControl: ActionControl) extends PCanvas with Logger {
                               Range zeichnen
 
      ****************************************************************************/
-    debug("Knoten zeichnen")
-
     dragHandler = new EditorDragEventHandler(this, graph, selection)
     elementHandler = new ElementMouseEventHandler(this, graph, selection)
     this.graph = graph
 
     graph.eachNode{
       n =>
-      /* Position setzen */
-        n.setBounds(n.p.scaledX, n.p.scaledY, 5, 5)
-
-        /* Element der Knotenebene zuweisen */
+      /* Element der Knotenebene zuweisen */
         knotenEbene.addChild(n)
 
         /* ToolTip des Elements der Kamera zuweisen */

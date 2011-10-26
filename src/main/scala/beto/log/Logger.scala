@@ -19,4 +19,12 @@ trait Logger {
   private lazy val logger = org.apache.log4j.Logger.getLogger(loggerName)
 
   def debug(str: String) = logger.debug(str)
+
+  def time[T](msg:String, x: => T) = {
+    val start = System.nanoTime: Double
+    val result = x
+    val duration = (System.nanoTime: Double) - start
+    debug(msg + " [" + duration / 1000000.0 + " msecs]")
+    result
+  }
 }

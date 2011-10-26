@@ -30,17 +30,19 @@ class DRange(val rangeView: Range) extends DElement {
   import DElement._
   import DMerger._
   import DGeometry._
-
-  type ELL = Either[List[DPoint], List[Geometry]]
+  import Bender._
 
   private var children = List[DElement]()
 
   /* Nicht optimierte Bereichsumgebung eines Knotens */
-  lazy val range = shapeWriter.toShape(geometry)
-
   lazy val areaOptimal = children.map(_.areaOptimal).sum
 
   var geometry: Geometry = _
+  var name = rangeView.name
+
+  def ring = puffer.buffer(20).difference(puffer)
+
+  def puffer = geometry
 
   def exists(e: DElement): Boolean = children.contains(e)
 
@@ -98,8 +100,8 @@ class DRange(val rangeView: Range) extends DElement {
        *******************************************************************/
       def connect(a: Geometry, b: Geometry): Geometry = {
         connection(a, b) match {
-          case ls: LineString => emptyGeometry
-          case a: Geometry => a
+          case ls: LineString => a union b
+          case c: Geometry => a union b union c
         }
       }
 
@@ -121,7 +123,7 @@ class DRange(val rangeView: Range) extends DElement {
        *
        *******************************************************************/
       def mergePaired(list: List[Geometry]): List[Geometry] = {
-        mst(list) map (p => p._1 union p._2 union connect(p._1, p._2))
+        mst(list) map (p => connect(p._1, p._2))
       }
 
       /*******************************************************************
@@ -146,12 +148,12 @@ class DRange(val rangeView: Range) extends DElement {
           val geos = for (i <- 0 to erg.getNumGeometries - 1) yield (erg.getGeometryN(i))
           join(geos.toList)
         } else {
-          erg //TODO auf die harte Tour
+          val g1 = erg.getGeometryN(0)
+          val g2 = erg.getGeometryN(1)
+          erg union bend(g1, g2, connection(g1, g2)) //TODO auf die harte Tour
         }
       else
         erg
-
-
     }
 
     join(list map (_.geometry))
@@ -209,6 +211,7 @@ val diff = actArea - areaOptimal*/
     }*/
     origGeo
   }
+
 
   private def neighbours: List[DPoint] = {
     val choosen: List[DPoint] = leafs

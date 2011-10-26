@@ -35,7 +35,7 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
   /* DPunkte der Subdivision hinzufügen */
   lazy val subdiv = {
     dpoints.foreach(d => env.expandToInclude(d.coordinate))
-    new QuadEdgeSubdivision(env, 0)
+    new QuadEdgeSubdivision(env, 3)
   }
   /* */
   lazy val geomfact = new GeometryFactory
@@ -87,6 +87,7 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
       }
   }
 
+  debug("Delaunay Graph initialisiert %s".format(dpoints.size))
   /* Durchschnittsradius berechnen (harmonischer Mitterlwert)*/
   lazy val relEdges = edges.filter(e => e.orig.isInstanceOf[DPoint] && e.dest.isInstanceOf[DPoint])
 
@@ -94,13 +95,14 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
   DElement.minRadius = if (DElement.meanRadius / 3 < 20) 20 else DElement.meanRadius / 3
 
   DMerger.createInstance(this)
+  Bender.createInstance(this)
 
   /*  */
   def toRange(el: Seq[DElement], range: DRange) = {
     range.add(el)
+    dranges put (range.name, range)
     range.visualize
   }
-
 
 
   def getBounds(geo: Geometry): Tuple4[Double, Double, Double, Double] = {

@@ -142,6 +142,7 @@ class BeToFrame(val device: Display) extends ApplicationWindow(null) with Logger
         override def run = {
           val g = actionControl.newScenario(getText)
           graphEditor.drawGraph(g)
+          debug("done drawing")
           history.add(getText)
         }
       }

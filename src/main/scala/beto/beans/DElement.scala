@@ -27,12 +27,16 @@ object DElement {
 }
 
 
-trait DElement extends Logger {
+trait DElement  {
 
   import DElement._
   import DGeometry._
 
   def geometry: Geometry
+
+  def puffer: Geometry
+
+  def ring: Geometry
 
   val areaOptimal: Double
 

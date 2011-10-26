@@ -17,6 +17,7 @@ class DPoint(val spoint: SPoint)
   lazy val geometry = optimize(neighbours, toPolygon(x, y))
   lazy val puffer = circle(x, y, minRadius)
   lazy val areaOptimal = circle(x, y, meanRadius).getArea
+  lazy val ring = circle(x, y, 2 * minRadius).difference(puffer)
 
   lazy val x = spoint.p.scaledX
   lazy val y = spoint.p.scaledY
@@ -53,7 +54,7 @@ class DPoint(val spoint: SPoint)
     val sortedEdges: List[DEdge] = edges.sortWith((a, b) => a.angle(this) < b.angle(this))
 
     /* Kreis ist in Wirklichkeit ein Polygon mit 24 Seiten */
-    val sides = 24
+    val sides = 16
 
     /* Minimaler Winkel fungiert als Laufindex */
     val deltaPhi: Int = 360 / sides

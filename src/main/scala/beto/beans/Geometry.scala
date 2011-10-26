@@ -40,6 +40,20 @@ object DGeometry {
     geomfact.createLineString(Array(a, b))
   }
 
+  /**
+   *
+   */
+  def line(a: Array[Coordinate]): LineString = {
+    geomfact.createLineString(a)
+  }
+
+  /**
+   *
+   */
+  def line(a: List[Coordinate]): LineString = {
+    line(a.toArray)
+  }
+
   /**...
    *
    */

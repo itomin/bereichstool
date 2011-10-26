@@ -25,12 +25,14 @@ class ElementMouseEventHandler(val editor: GraphEditor, val graph: Network,
    *
    * @param e : ausgelöster Event, bringt das betroffene Element mit
    */
-  override def mouseEntered(e: PInputEvent) = e.getButton match {
-    case MouseEvent.NOBUTTON => e.getPickedNode match {
-      case e: Element => e.focusEnter
-      case _ => // Sonst gibts nichts
+  override def mouseEntered(e: PInputEvent) = {
+    e.getButton match {
+      case MouseEvent.NOBUTTON => e.getPickedNode match {
+        case e: Element => e.focusEnter
+        case _ => // Sonst gibts nichts
+      }
+      case _ => // Tue sonst nichts
     }
-    case _ => // Tue sonst nichts
   }
 
   /**
@@ -57,20 +59,24 @@ class ElementMouseEventHandler(val editor: GraphEditor, val graph: Network,
    *
    * @param e : ausgelöster Event, bringt das betroffene Element mit
    */
-  override def mouseClicked(e: PInputEvent) = e.isControlDown match {
-    case true => toRange(e)
-    case false => chooseElement(e)
+  override def mouseClicked(e: PInputEvent) = {
+    e.isControlDown match {
+      case true => toRange(e)
+      case false => chooseElement(e)
+    }
   }
 
   /**
    *
    */
-  def chooseElement(e: PInputEvent) = e.getButton match {
-    case MouseEvent.BUTTON1 => e.getPickedNode match {
-      case e: Element => selected.select(e)
-      case _ => // Sonst gibts nichts
+  def chooseElement(e: PInputEvent) = {
+    e.getButton match {
+      case MouseEvent.BUTTON1 => e.getPickedNode match {
+        case e: Element => selected.select(e)
+        case _ => // Sonst gibts nichts
+      }
+      case MouseEvent.BUTTON3 => // Bereich im Bereich anlegen
     }
-    case MouseEvent.BUTTON3 => // Bereich im Bereich anlegen
   }
 
   /**

@@ -57,28 +57,26 @@ abstract class Element(val name: String,
 case class Range(override val name: String,
                  override val p: Position) extends Element(name, p) {
 
-  protected override lazy val colorUnselected = new Color(176f / 255f, 43f / 255f, 44f / 255f, 0.3f)
-  protected override lazy val colorSelected = new Color(176f / 255f, 43f / 255f, 44f / 255f, 0.6f)
+  protected override lazy val colorUnselected = new Color(176f / 255f, 43f / 255f, 44f / 255f, 1.0f)
+  protected override lazy val colorSelected = new Color(176f / 255f, 43f / 255f, 44f / 255f, 0.3f)
   override val dElement = new DRange(this)
-  var painter = (g2: Graphics2D) => {
-    g2.setPaint(getPaint)
-    g2.draw(form)
-    g2.setStroke(new BasicStroke(2))
-  }
+  protected var form: Shape = new Ellipse2D.Double
 
   setPaint(colorUnselected)
   setBounds(p.x, p.y, 20, 20)
 
+
   override def paint(aPaintContext: PPaintContext) = {
-    painter(aPaintContext.getGraphics)
+    val g2 = aPaintContext.getGraphics
+    g2.setPaint(getPaint)
+    g2.draw(form)
+    if (isSelected) g2.fill(form)
+    g2.setStroke(new BasicStroke(2))
   }
 
-  def deform(form: Shape) = {
-    painter = (g2: Graphics2D) => {
-      g2.setPaint(getPaint)
-      g2.setStroke(new BasicStroke(2))
-      g2.draw(form)
-    }
+  def deform(f: Shape) = {
+    form = f
+    setBounds(f.getBounds2D.getX, f.getBounds2D.getY, f.getBounds2D.getWidth, f.getBounds2D.getHeight)
   }
 
 
@@ -90,7 +88,10 @@ case class Range(override val name: String,
  */
 case class SPoint(override val name: String,
                   override val p: Position) extends Element(name, p) {
+
+  protected var form: Shape = new Ellipse2D.Double
   override val dElement = new DPoint(this)
+  setBounds(p.scaledX, p.scaledY, 5, 5)
   setPaint(colorUnselected)
 }
 

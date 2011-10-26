@@ -4,6 +4,7 @@ import edu.umd.cs.piccolo.nodes.{PPath, PText}
 import edu.umd.cs.piccolo.util.PPaintContext
 import java.awt.geom.{Ellipse2D, Rectangle2D}
 import java.awt.{Shape, BasicStroke, Color}
+import com.vividsolutions.jts.awt.PolygonShape
 
 
 /**
@@ -23,7 +24,7 @@ trait Drawable extends PPath {
   val tooltip = new PText("%s (%s, %s)".format(name, p.x, p.y))
 
 
-  protected lazy val form = new Ellipse2D.Double
+  protected var form: Shape
   protected lazy val colorSelected = new Color(255, 116, 0)
   protected lazy val colorUnselected = new Color(64, 150, 238)
 
@@ -83,12 +84,16 @@ trait Drawable extends PPath {
    */
   override def setBounds(x: Double, y: Double, w: Double, h: Double): Boolean = {
     if (super.setBounds(x, y, w, h)) {
-      form.setFrame(x, y, w, h)
+      form match {
+        case e: Ellipse2D.Double => e.setFrame(x, y, w, h)
+        case _ => //nichts zu tun
+      }
       true
     } else {
       false
     }
   }
+
 
   /**
    * @param aPaintContext
@@ -96,7 +101,7 @@ trait Drawable extends PPath {
   override def paint(aPaintContext: PPaintContext) = {
     val g2 = aPaintContext.getGraphics
     g2.setPaint(getPaint)
-    g2.fill(form)
+    g2.fillOval(getX.toInt, getY.toInt, 5, 5)
     g2.setStroke(new BasicStroke(0))
   }
 }
