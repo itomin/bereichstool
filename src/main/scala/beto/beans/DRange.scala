@@ -150,7 +150,7 @@ class DRange(val rangeView: Range) extends DElement {
         } else {
           val g1 = erg.getGeometryN(0)
           val g2 = erg.getGeometryN(1)
-          erg union bend(g1, g2, connection(g1, g2)) //TODO auf die harte Tour
+          erg union bend(g1, g2) //TODO auf die harte Tour
         }
       else
         erg

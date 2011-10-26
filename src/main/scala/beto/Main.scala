@@ -13,11 +13,15 @@ object Main {
     window.open
   }
 
-   /* def main(args: Array[String]): Unit = {
+ /* def main(args: Array[String]): Unit = {
 
-    val a: Array[String] = Array[String]("1", "2", "3", "4",  "5")
+    5 match {
+      case 1 => println("1")
+      case 2 => println("2")
+      case x if x > 2 => println(x)
+      case _ => println("else")
+    }
 
-    for(i <- a; j <- a if j != i) println(i + "-" + j )
   }*/
 
 }

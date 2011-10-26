@@ -5,25 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5599585e-9365-40bf-ba27-7c03d727b814" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/Bender.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/dependencies" afterPath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/dependencies" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/external" afterPath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/external" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/generated_files" afterPath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/generated_files" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/hashes" afterPath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/hashes" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/projects" afterPath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/projects" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/DElement.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/DElement.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/Main.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/Main.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/DMerger.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/DMerger.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/DPoint.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/DPoint.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/DRange.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/DRange.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/DelaunayGraph.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/DelaunayGraph.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/Geometry.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/Geometry.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/view/Drawable.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/view/Drawable.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/view/Element.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/view/Element.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/event/ElementMouseEventHandler.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/event/ElementMouseEventHandler.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/log/Logger.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/log/Logger.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/view/GraphEditor.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/view/GraphEditor.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/view/Gui.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/view/Gui.scala" />
     </list>
     <ignored path="Bereichstool.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -126,7 +117,25 @@
       <file leaf-file-name="DMerger.scala" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DMerger.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="58" column="20" selection-start="1524" selection-end="1524" vertical-scroll-proportion="0.38793105">
+            <state line="120" column="0" selection-start="3398" selection-end="3398" vertical-scroll-proportion="0.59195405">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Geometry.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/Geometry.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="46" column="0" selection-start="943" selection-end="943" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Main.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/Main.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="13" column="3" selection-start="87" selection-end="256" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -141,19 +150,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="XMLParser.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/handle/XMLParser.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="79" column="63" selection-start="1826" selection-end="1826" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="DRange.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DRange.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="152" column="10" selection-start="4282" selection-end="4291" vertical-scroll-proportion="0.0">
+            <state line="152" column="31" selection-start="4303" selection-end="4303" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -162,7 +162,7 @@
       <file leaf-file-name="Bender.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/Bender.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="0" selection-start="724" selection-end="1327" vertical-scroll-proportion="0.0">
+            <state line="43" column="29" selection-start="948" selection-end="948" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -171,7 +171,7 @@
       <file leaf-file-name="DPoint.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DPoint.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="79" column="16" selection-start="2549" selection-end="2554" vertical-scroll-proportion="-4.16">
+            <state line="19" column="41" selection-start="693" selection-end="693" vertical-scroll-proportion="-3.56">
               <folding />
             </state>
           </provider>
@@ -200,21 +200,21 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DConvexHuller.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DEdge.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/log/Logger.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/event/ElementMouseEventHandler.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/beans/view/Drawable.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/beans/view/Bender.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/beans/Geometry.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DRange.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/beans/view/Element.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/beans/Bender.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DPoint.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DElement.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/view/Gui.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DelaunayGraph.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/view/GraphEditor.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/Main.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DRange.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DPoint.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DMerger.scala" />
       </list>
     </option>
@@ -945,18 +945,18 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="SBT Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.31378764" sideWeight="0.0" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32923076" sideWeight="0.0" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290735" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3280507" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="simpleUML" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24735558" sideWeight="0.076677315" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290735" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290735" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24816924" sideWeight="0.6948882" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32818848" sideWeight="0.6846276" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24857838" sideWeight="0.68621236" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24857838" sideWeight="0.68621236" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290735" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290735" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.24979658" sideWeight="0.6709265" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
     </layout>
@@ -1000,11 +1000,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/ConvexPolygon.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="0" selection-start="336" selection-end="336" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="jar://$PROJECT_DIR$/lib/jts-1.12.jar!/com/vividsolutions/jts/geom/Coordinate.class">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="13" selection-start="165" selection-end="165" vertical-scroll-proportion="0.16666667" />
@@ -1013,11 +1008,6 @@
     <entry file="jar://$PROJECT_DIR$/lib/jts-1.12.jar!/com/vividsolutions/jts/geom/Geometry.class">
       <provider selected="true" editor-type-id="text-editor">
         <state line="40" column="56" selection-start="1846" selection-end="1846" vertical-scroll-proportion="0.3573487" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/Geometry.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="53" column="18" selection-start="1064" selection-end="1064" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/view/Network.scala">
@@ -1030,11 +1020,6 @@
         <state line="79" column="63" selection-start="1826" selection-end="1826" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DRange.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="152" column="10" selection-start="4282" selection-end="4291" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/view/Element.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state line="42" column="0" selection-start="1023" selection-end="1023" vertical-scroll-proportion="0.24332345">
@@ -1045,13 +1030,6 @@
     <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/view/Drawable.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state line="71" column="70" selection-start="1734" selection-end="1734" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/Bender.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="0" selection-start="724" selection-end="1327" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1084,16 +1062,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/Main.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="3" selection-start="87" selection-end="256" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/Bender.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="29" selection-start="948" selection-end="948" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DRange.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="152" column="31" selection-start="4303" selection-end="4303" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DPoint.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="79" column="16" selection-start="2549" selection-end="2554" vertical-scroll-proportion="-4.16">
+        <state line="19" column="41" selection-start="693" selection-end="693" vertical-scroll-proportion="-3.56">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/Geometry.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="46" column="0" selection-start="943" selection-end="943" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DMerger.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="20" selection-start="1524" selection-end="1524" vertical-scroll-proportion="0.38793105">
+        <state line="120" column="0" selection-start="3398" selection-end="3398" vertical-scroll-proportion="0.59195405">
           <folding />
         </state>
       </provider>
