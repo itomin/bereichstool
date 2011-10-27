@@ -46,16 +46,20 @@ object DMerger extends Logger {
    * der Umgebung entsprechend verbogen werden.
    */
   def bend(a: G, b: G): G = {
+
     val (lTang, rTang) = randPoints(a, b)
+    debug("lTang: %s".format(lTang))
+    debug("rTang: %s".format(rTang))
     val left = findBendConnection(a, b, line(lTang._1, lTang._2))
     val right = findBendConnection(a, b, line(rTang._1, rTang._2))
 
-    (left, right) match {
-      case (None, None) => a //scale(a,b)
+    val c = (left, right) match {
+      case (None, None) => emptyGeometry
       case (None, Some(x)) => x
       case (Some(x), None) => x
       case (Some(x), Some(y)) => List(x, y).minBy(l => length(l))
     }
+    c.buffer(minRadius / 2)
   }
 
   def length(l: LineString): Double = {
@@ -66,78 +70,147 @@ object DMerger extends Logger {
 
   def findBendConnection(a: G, b: G, tangente: LineString): Option[LineString] = {
 
-    var isPassable = true
-    val intersectedDisturber = intersection(foreign(a :: b :: Nil), tangente)
-    val distCoos = intersectedDisturber.flatMap(d => d.coordinates)
-    val mainDisturber = new ConvexHull(distCoos.toArray, geomfact).getConvexHull
-    val envDisturber = foreign(intersectedDisturber map (_.puffer), minRadius.toInt)
+    debug("tangente %s".format(tangente.toString))
 
+    def findBendOutside(a: G, b: G, tangente: LineString, sub: LG): Option[LineString] = {
+      debug("======================== find bend outside begin ======================== ")
+      val distCoos = sub.flatMap(d => d.getCoordinates)
+      val mainDisturber = new ConvexHull(distCoos.toArray, geomfact).getConvexHull
+      val deathZone = foreign(a :: b :: sub, minRadius.toInt).map(d => d.ring)
+      debug("sub:")
+      printGeo(sub)
+      debug("deathZone: %s".format(foreign(a :: b :: sub, minRadius.toInt)))
+      val outsideParts = splitPolygon(mainDisturber, tangente)
+      val outside = outsideParts map (b => addBendToTangente(tangente, mainDisturber, b))
 
-    def optimal(options: List[LineString]): Option[LineString] = {
+      val erg = outside match {
+        case Nil => None
+        case List(_, _*) => {
+          optimal(outside, deathZone, sub) match {
+            case Right(lg) => findBendOutside(a, b, tangente, lg ::: sub)
+            case Left(a) => Some(a)
+          }
+        }
+      }
+      debug("======================== find bend outside end ======================== ")
+      erg
+    }
+
+    def findBendInside(a: G, b: G, tangente: LineString, sub: LG): Option[LineString] = {
+      debug("======================== find bend inside begin ======================== ")
+      var isPassable = true
+      //val intersectedDisturber = intersection(foreign(a :: b :: Nil), tangente) map (d => d.ring) //TODO foreign anpassen (Soll direkt geometrien lieferen)
+      val deathZone = foreign(a :: b :: sub, minRadius.toInt).map(d => d.ring) ::: sub
+      debug("sub:")
+      printGeo(sub)
+      debug("deathZone: %s".format(foreign(a :: b :: sub, minRadius.toInt)))
+      var in = tangente
+
+      for (dist <- sub if isPassable) {
+        // TODO dist.ring to convex
+        // TODO if convex contains tangente.getCooridnate(0) ||  convex.contains.getCoordinate(1)
+        // TODO split(dist,ring) else split(convex)
+        optimal(splitPolygon(dist, tangente), deathZone, dist :: Nil) match {
+          case Right(_) => isPassable = false
+          case Left(x) => in = addBendToTangente(in, dist, x)
+        }
+      }
+      debug("======================== find bend inside end ======================== ")
+      if (isPassable) Some(line(in.getCoordinates)) else None
+    }
+
+    def optimal(options: List[LineString], deathZone: LG, sub: LG): Either[LineString, LG] = {
       if (options.isEmpty) {
-        None
+        Right(Nil)
       } else {
-        val paths = options filter {
-          l => !envDisturber.exists(f => f.ring.intersects(l.buffer(minRadius / 2)))
-        }
+        val dZone = deathZone.diff(sub)
+        val paths = options filter (l => !dZone.exists(f => f.intersects(l.buffer(minRadius / 2))))
+
         paths match {
-          case List() => None
-          case List(_) => Some(paths.head)
-          case List(_, _*) => Some(paths.sortBy(g => length(g)).head)
+          case List() => Right(dZone.filter(g => options.exists(l => g.intersects(l.buffer(minRadius / 2)))))
+          case List(_) => Left(paths.head)
+          case List(_, _*) => Left(paths.sortBy(g => length(g)).head)
         }
       }
     }
 
-    val outside = splitPolygon(mainDisturber, tangente)
+    def addBendToTangente(tang: LineString, ring: G, bend: LineString): LineString = {
+      debug(tang.toString)
+      val (from, to) = farthestPair(tang.intersection(ring).getCoordinates.toList)
+      val diffTang = tang.difference(ring).getCoordinates.toList
+      val (p1, _) = diffTang.splitAt(diffTang.indexOf(from))
+      val (_, _ :: p2) = diffTang.splitAt(diffTang.indexOf(to))
+      val bends = bend.getCoordinates.toList
 
-    var in: Geometry = tangente
-
-    for (dist <- intersectedDisturber if isPassable) yield {
-      optimal(splitPolygon(dist.ring, tangente)) match {
-        case None => isPassable = false
-        case Some(x) => in = in.difference(dist.ring).union(x)
-      }
+      if (p1.last.distance(bends.head) < p1.last.distance(bends.last))
+        line(p1 ::: bends ::: p2)
+      else
+        line(p1 ::: bends.reverse ::: p2)
     }
-    val inside = line(in.getCoordinates)
 
-    val ways = if (isPassable) inside :: outside else outside
+    debug("sub: %s".format(intersection(foreign(a :: b :: Nil), tangente)))
+    //TODO foreign anpassen (Soll direkt geometrien lieferen)
+    val sub = intersection(foreign(a :: b :: Nil, minRadius.toInt), tangente) map (d => d.ring)
+    val outside = findBendOutside(a, b, tangente, sub)
+    val inside = findBendInside(a, b, tangente, sub)
 
-    optimal(ways)
+    (outside, inside) match {
+      case (None, None) => None
+      case (Some(x), None) => Some(x)
+      case (None, Some(x)) => Some(x)
+      case (Some(x), Some(y)) => Some(List(x, y).sortBy(g => length(g)).head)
+    }
   }
 
   def splitPolygon(g: G, splitter: G): List[LineString] = {
+    debug("======================== split polygon begin ======================== ")
+    debug("splitter %s".format(splitter))
+    debug("touches %s".format(splitter.touches(g)))
+    debug("intersects %s".format(splitter.intersects(g)))
 
-    def split(from: C, to: C): List[LineString] = {
+    def split(from: C, to: C, g: G): List[LineString] = {
+      debug("======================== split begin ======================== ")
+      debug("from  %s  to  %s".format(from, to))
+
+
       val cs = g.getCoordinates.tail.toList
-
+      debug(cs.toString)
       val (p, q) = cs splitAt (cs indexOf (from))
-      val (p1, t1 :: _) = (q ::: p) splitAt (cs indexOf (to))
-      val path1 = p1 :+ t1
+      var turned = (q ::: p)
+      val (part1, part2) = turned splitAt (turned indexOf (to))
+      val path1 = part1 :+ part2.head
 
       val (k, l) = cs splitAt (cs indexOf (to))
-      val (p2, t2 :: _) = (l ::: k) splitAt (cs indexOf (from))
-      val path2 = p2 :+ t2
-
+      turned = (l ::: k)
+      val (part11, part12) = (l ::: k) splitAt (turned indexOf (from))
+      val path2 = part11 :+ part12.head
+      debug("======================== split end ======================== ")
       List(line(path1), line(path2))
     }
+    if (splitter.getCoordinates.exists(c => g.contains(point(c)))) {
+      Nil
+    } else {
+      val splitted = g.intersection(splitter)
+      val iCoos = splitted.getCoordinates
+      val toSplit = g.difference(splitter)
 
-    val splitted = g.intersection(splitter)
-    val iCoos = splitted.getCoordinates
-
-    iCoos match {
-      case Array(_) => Nil
-      case Array(a, b) => split(iCoos(0), iCoos(1))
-      case Array(_, _*) => {
-        val (from, to) = farthestPair(iCoos.toList)
-        split(from, to)
+      val erg = iCoos match {
+        case Array(a, b) => split(iCoos(0), iCoos(1), toSplit)
+        case Array(_, _*) => {
+          val (from, to) = farthestPair(iCoos.toList)
+          split(from, to, toSplit)
+        }
+        case Array() => Nil
       }
-      case Array() => Nil
+      debug("======================== split polygon end ======================== ")
+      erg
     }
   }
 
 
   def farthestPair(list: List[Coordinate]): Pair[C, C] = {
-    val paired = for (i <- list; j <- list) yield (i, j)
+    val paired = for (i <- list;
+                      j <- list) yield (i, j)
     val sorted = paired sortWith ((p1, p2) => p1._1.distance(p1._2) > p2._1.distance(p2._2))
     sorted.head
   }
@@ -204,6 +277,10 @@ object DMerger extends Logger {
 
   }
 
+  def printGeo(list: LG) = {
+    val p = dpoints filter (dp => list.exists(g => g.contains(dp.geoPoint)))
+    debug(p.toString)
+  }
 
   private def find(upper: PCC, lower: PCC, fo: LDP): Pair[Option[Geometry], Option[Geometry]] = {
 
@@ -357,16 +434,15 @@ object DMerger extends Logger {
       val minX = sX.head.x - off
       val maxY = sY.last.y + off
       val minY = sY.head.y - off
+      //debug("bounds: maxX %s minX %s maxY %s minY %s".format(maxX, minX, maxY, minY))
       tetragon(new C(minX, minY), new C(minX, maxY), new C(maxX, maxY), new C(maxX, minY))
     }
-
     def filter(bounds: G): LDP = dpoints filter (p => bounds.intersects(p.puffer))
 
     val all = env(list, offset)
     val choosen = all filter (p => list.exists(g => g.contains(p.geoPoint)))
     all diff choosen
   }
-
 
 }
 
