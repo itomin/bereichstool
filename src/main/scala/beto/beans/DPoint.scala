@@ -14,7 +14,7 @@ class DPoint(val spoint: SPoint)
   import DGeometry._
   import DElement._
 
-  lazy val geometry = optimize(neighbours, toPolygon(x, y))
+  lazy val geometry = toPolygon(x, y) // optimize(neighbours,
   lazy val puffer = circle(x, y, minRadius)
   lazy val areaOptimal = circle(x, y, meanRadius).getArea
   lazy val ring = circle(x, y, 2 * minRadius)

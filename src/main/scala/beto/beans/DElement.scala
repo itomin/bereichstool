@@ -27,7 +27,7 @@ object DElement {
 }
 
 
-trait DElement  {
+trait DElement {
 
   import DElement._
   import DGeometry._
@@ -37,6 +37,8 @@ trait DElement  {
   def puffer: Geometry
 
   def ring: Geometry
+
+  var visited: Boolean = false
 
   val areaOptimal: Double
 
