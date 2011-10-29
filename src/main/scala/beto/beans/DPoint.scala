@@ -14,15 +14,16 @@ class DPoint(val spoint: SPoint)
   import DGeometry._
   import DElement._
 
-  lazy val geometry = toPolygon(x, y) // optimize(neighbours,
+  lazy val geometry = toPolygon(x, y)
+  // optimize(neighbours,
   lazy val puffer = circle(x, y, minRadius)
   lazy val areaOptimal = circle(x, y, meanRadius).getArea
-  lazy val ring = circle(x, y, 2 * minRadius)
+  lazy val ring = circle(x, y, 2 * minRadius - 5)
 
   lazy val x = spoint.p.scaledX
   lazy val y = spoint.p.scaledY
   lazy val coordinate = new Coordinate(x, y)
-  lazy val geoPoint = geomfact.createPoint(coordinate)
+  lazy val geoPoint = geomfact.createPoint(coordinate).buffer(2.5)
   lazy val neighbours = edges map (e => e.otherPoint(this)) collect {
     case d: DPoint => d
   }

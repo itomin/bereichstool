@@ -92,7 +92,7 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
   lazy val relEdges = edges.filter(e => e.orig.isInstanceOf[DPoint] && e.dest.isInstanceOf[DPoint])
 
   DElement.meanRadius = (relEdges.size / relEdges.map(e => 1.0d / e.length.toInt).sum) / 2
-  DElement.minRadius = if (DElement.meanRadius / 3 < 20) 20 else DElement.meanRadius / 3
+  DElement.minRadius = 20 //relEdges.map(e => e.length).min / 2 // DElement.meanRadius / 2 //if (DElement.meanRadius / 3 < 20) 20 else
 
   DMerger.createInstance(this)
   Bender.createInstance(this)

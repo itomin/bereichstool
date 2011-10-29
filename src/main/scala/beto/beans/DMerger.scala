@@ -132,7 +132,14 @@ object DMerger extends Logger {
           disturber match {
             case List() => None
             case List(_*) => {
-              val mergDisturber = disturber.map(g => toSplit union g union connection(toSplit, g))
+              val mergDisturber = disturber.map{
+                g =>
+                  connection(toSplit, g) match {
+                    case x: LineString => toSplit union g
+                    case x: Geometry => toSplit union g union x
+                  }
+
+              }
               val newToSplit = unionAll(mergDisturber)
               for (el <- dpoints) (if (newToSplit.contains(el.geoPoint)) el.visited = true)
               findBendInside(a, b, bend, geomfact.createGeometry(newToSplit))
@@ -189,31 +196,35 @@ object DMerger extends Logger {
 
     val sub = intersection(foreign(a :: b :: Nil, minRadius.toInt), tangente)
     debug("Subset: %s".format(sub.toString))
-    // val outside = findBendOutside(a, b, tangente, sub)
-    var bendLine = tangente
+
+    var insideTang = tangente
     var isPassable = true
     for (el <- sub if !el.visited && isPassable) {
       el.visited = true
-      findBendInside(a, b, bendLine, el.ring) match {
-        case Some(x) => bendLine = x
+      findBendInside(a, b, insideTang, el.ring) match {
+        case Some(x) => insideTang = x
         case None => isPassable = false
       }
     }
-
     deinitialize
 
+    val ch = new ConvexHull(sub.flatMap(el => el.ring.getCoordinates).toArray, geomfact)
+    val outside = findBendInside(a, b, tangente, ch.getConvexHull)
+    deinitialize
+    // val outside = findBendOutside(a, b, tangente, sub)
+
     debug("======================== find bend connection end ======================== ")
-    isPassable match {
-      case true => Some(line(bendLine.getCoordinates))
+    val inside = isPassable match {
+      case true => Some(line(insideTang.getCoordinates))
       case false => None
     }
 
-    /*(outside, inside) match {
+    (outside, inside) match {
       case (None, None) => None
       case (Some(x), None) => Some(x)
       case (None, Some(x)) => Some(x)
       case (Some(x), Some(y)) => Some(List(x, y).sortBy(g => length(g)).head)
-    }*/
+    }
 
   }
 

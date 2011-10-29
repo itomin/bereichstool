@@ -99,6 +99,7 @@ class DRange(val rangeView: Range) extends DElement {
        *
        *******************************************************************/
       def connect(a: Geometry, b: Geometry): Geometry = {
+
         connection(a, b) match {
           case ls: LineString => a union b
           case c: Geometry => a union b union c
@@ -131,7 +132,7 @@ class DRange(val rangeView: Range) extends DElement {
        *  Merge alle Polygone
        *
        *******************************************************************/
-      val erg = list match {
+      var erg = list match {
         case List(a) => a
         case List(_, _*) => mergeAll(mergePaired(list))
         case _ => throw new Exception("")
@@ -142,18 +143,20 @@ class DRange(val rangeView: Range) extends DElement {
        *  Prüfe Zusammenhang der entstandenen Topologie
        *
        *******************************************************************/
-      if (erg.getNumGeometries > 1)
+      if (erg.getNumGeometries > 1) {
+        val geos = for (i <- 0 to erg.getNumGeometries - 1) yield (erg.getGeometryN(i))
         if (erg.getNumGeometries < lastCount) {
           lastCount = erg.getNumGeometries
-          val geos = for (i <- 0 to erg.getNumGeometries - 1) yield (erg.getGeometryN(i))
           join(geos.toList)
         } else {
-          val g1 = erg.getGeometryN(0)
-          val g2 = erg.getGeometryN(1)
-          erg union bend(g1, g2) //TODO auf die harte Tour
+          val paired = mst(geos.toList)
+          paired foreach (p => erg = erg.union(bend(p._1, p._2)))
+          erg
+
         }
-      else
+      } else {
         erg
+      }
     }
 
     join(list map (_.geometry))
@@ -166,7 +169,7 @@ class DRange(val rangeView: Range) extends DElement {
      *******************************************************************/
 
     /*erg match {
-      case d: Polygon => debug("%s".format(polygon(get)))
+      case d: Polygon => println("%s".format(polygon(get)))
       case _ => erg
     }*/
 
@@ -192,7 +195,7 @@ val diff = actArea - areaOptimal*/
       e =>
         e.otherPoint(this) match {
           case p: DPoint => {
-            debug("Intersects with %s %s".format(p, origGeo.intersects(p.geometry)))
+            println("Intersects with %s %s".format(p, origGeo.intersects(p.geometry)))
           }
           case _ => // Nothing to do
         }

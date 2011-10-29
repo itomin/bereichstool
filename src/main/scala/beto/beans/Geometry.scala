@@ -1,6 +1,6 @@
 package beto.beans
 
-import com.vividsolutions.jts.geom.{GeometryFactory, LineString, Geometry, Coordinate}
+import com.vividsolutions.jts.geom._
 
 /**
  * Created by IntelliJ IDEA.
@@ -57,11 +57,11 @@ object DGeometry {
   /**...
    *
    */
-  def circle(x: Int, y: Int, radius: Double): Geometry = {
+  def circle(x: Int, y: Int, radius: Double): Polygon = {
 
     val sides = 32
 
-    var coords = (0 to sides).map{
+    var coords = (0 to sides -  1).map{
       i =>
         val angle = (i.toDouble / sides.toDouble) * math.Pi * 2.0
         val dx = math.cos(angle) * radius
