@@ -20,11 +20,17 @@ import com.vividsolutions.jts.geom.{Geometry, GeometryFactory, Envelope, Coordin
 
 class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger {
 
+
   /* Simone-Punkte zu Delaunay-Punkte konvertieren */
-  lazy val dpoints: List[DPoint] = spoints.map(s => s.dElement)
+  lazy val pointsMap = HashMap(spoints.map{
+    s => (s.name, new DPoint(s.p.scaledX, s.p.scaledY))
+  }.toSeq: _*)
 
   /* */
-  lazy val dranges: HashMap[String, DRange] = HashMap[String, DRange]()
+  var rangesMap: HashMap[String, DRange] = HashMap[String, DRange]()
+
+  lazy val dpoints = pointsMap.values.toList
+  lazy val dranges = rangesMap.values.toList
 
   /* Delaunay-Umgebung initialisieren */
   lazy val env = new Envelope
@@ -93,21 +99,30 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
 
   DElement.meanRadius = (relEdges.size / relEdges.map(e => 1.0d / e.length.toInt).sum) / 2
   DElement.minRadius = 20 //relEdges.map(e => e.length).min / 2 // DElement.meanRadius / 2 //if (DElement.meanRadius / 3 < 20) 20 else
+  //DMerger.createInstance(this)
 
-  DMerger.createInstance(this)
-  Bender.createInstance(this)
+  lazy val raster = new Raster(netview.w, netview.h, DElement.minRadius)
+
+  dpoints.foreach(g => raster.traversableOff(g.puffer))
+
 
   /*  */
-  def toRange(el: Seq[DElement], range: DRange) = {
-    range.add(el)
-    dranges put (range.name, range)
-    range.visualize
+  def toRange(el: Seq[Element], vrange: Range) = {
+    val drange = ranges(vrange)
+    drange.add(el.map(e => points(e.name)))
   }
 
-
-  def getBounds(geo: Geometry): Tuple4[Double, Double, Double, Double] = {
-    val sortByX = geo.getCoordinates.sortWith((a, b) => a.x < b.x)
-    val sortByY = geo.getCoordinates.sortWith((a, b) => a.y < b.y)
-    (sortByX.last.x, sortByX.head.x, sortByY.last.y, sortByY.head.y)
+  def intersection(geo: Geometry): List[DElement] = {
+    (dpoints ::: dranges).filter(el => geo.intersects(el.puffer))
   }
+
+  private def ranges(vrange: Range): DRange = {
+    rangesMap.getOrElseUpdate(vrange.name, new DRange(vrange, this))
+  }
+
+  private def points(key: String): DPoint = pointsMap.get(key) match {
+    case Some(x) => x
+    case None => throw new RuntimeException("Element %s konnte nicht gefunden werden!".format(key))
+  }
+
 }

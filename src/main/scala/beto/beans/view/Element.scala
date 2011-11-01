@@ -45,8 +45,6 @@ abstract class Element(val name: String,
 
   import Element._
 
-  val dElement: DElement
-
   override def toString: String = name + " (" + p.scaledX + ", " + p.scaledY + ")"
 }
 
@@ -59,7 +57,6 @@ case class Range(override val name: String,
 
   protected override lazy val colorUnselected = new Color(176f / 255f, 43f / 255f, 44f / 255f, 1.0f)
   protected override lazy val colorSelected = new Color(176f / 255f, 43f / 255f, 44f / 255f, 0.3f)
-  override val dElement = new DRange(this)
   protected var form: Shape = new Ellipse2D.Double
 
   setPaint(colorUnselected)
@@ -90,7 +87,6 @@ case class SPoint(override val name: String,
                   override val p: Position) extends Element(name, p) {
 
   protected var form: Shape = new Ellipse2D.Double
-  override val dElement = new DPoint(this)
   setBounds(p.scaledX, p.scaledY, 5, 5)
   setPaint(colorUnselected)
 }

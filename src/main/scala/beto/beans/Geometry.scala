@@ -1,6 +1,7 @@
 package beto.beans
 
 import com.vividsolutions.jts.geom._
+import com.vividsolutions.jts.algorithm.ConvexHull
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,7 +32,7 @@ object DGeometry {
   /**
    *
    */
-  def point(c: Coordinate): Geometry = geomfact.createPoint(c)
+  def point(c: Coordinate): Point = geomfact.createPoint(c)
 
   /**
    *
@@ -61,7 +62,7 @@ object DGeometry {
 
     val sides = 32
 
-    var coords = (0 to sides -  1).map{
+    var coords = (0 to sides - 1).map{
       i =>
         val angle = (i.toDouble / sides.toDouble) * math.Pi * 2.0
         val dx = math.cos(angle) * radius
@@ -74,11 +75,21 @@ object DGeometry {
     geomfact.createPolygon(geomfact.createLinearRing(coords.toArray), null)
   }
 
+  def length(l: LineString): Double = {
+    val coos = l.getCoordinates
+    val dist = for (i <- 0 to coos.size - 2) yield (coos(i).distance(coos(i + 1)))
+    dist.sum
+  }
+
   /**
    *
    */
   def emptyGeometry = {
     geomfact.createPolygon(geomfact.createLinearRing(Array[Coordinate]()), null)
+  }
+
+  def convexHull(es: List[DElement]): Geometry = {
+    new ConvexHull(es flatMap (p => p.coordinates) toArray, new GeometryFactory).getConvexHull.convexHull
   }
 
 }

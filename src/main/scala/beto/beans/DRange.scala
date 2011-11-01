@@ -24,21 +24,20 @@ object DRange {
   }
 }
 
-class DRange(val rangeView: Range) extends DElement {
+class DRange(val vrange: Range, val delaunay: DelaunayGraph) extends DElement with Mergeable {
 
   import Kruskal._
   import DElement._
-  import DMerger._
   import DGeometry._
-  import Bender._
 
   private var children = List[DElement]()
 
   /* Nicht optimierte Bereichsumgebung eines Knotens */
   lazy val areaOptimal = children.map(_.areaOptimal).sum
 
-  var geometry: Geometry = _
-  var name = rangeView.name
+  var geometry: Geometry = emptyGeometry
+  var name = vrange.name
+  val raster = delaunay.raster
 
   def ring = puffer.buffer(20).difference(puffer)
 
@@ -50,6 +49,21 @@ class DRange(val rangeView: Range) extends DElement {
     e => f(e)
   }
 
+  def add(es: Seq[DElement]): Unit = {
+    es.foreach(add(_))
+    review(es.toList)
+  }
+
+  def review(es: List[DElement]) = {
+    geometry = (isConvex(es), geometry.isEmpty) match {
+      case (true, true) => convexHull(es)
+      case (true, false) => merge(geometry :: convexHull(es) :: Nil)
+      case (false, true) => merge(es.map(_.geometry))
+      case (false, false) => merge(geometry :: es.map(_.geometry))
+    }
+    vrange.deform(shapeWriter.toShape(geometry))
+  }
+
   def add(e: DElement): Unit = {
     if (!this.exists(e)) {
       children ::= e
@@ -57,8 +71,6 @@ class DRange(val rangeView: Range) extends DElement {
       println("DPoint: " + e + " exists")
     }
   }
-
-  def add(es: Seq[DElement]): Unit = es.foreach(add(_))
 
   def leafs: List[DPoint] = children.flatMap{
     el => el match {
@@ -68,26 +80,74 @@ class DRange(val rangeView: Range) extends DElement {
   }
 
 
-  def visualize = {
-
-    val points = children collect {
-      case d: DPoint => d
-    }
-
-    geometry = if (isConvex)
-      new ConvexHull(points map (p => p.coordinate) toArray, new GeometryFactory).getConvexHull
-    else
-      merge(points)
-
-    rangeView.deform(shapeWriter.toShape(geometry))
+  private def isConvex(es: List[DElement]): Boolean = {
+    val list = delaunay.intersection(convexHull(es))
+    println(list)
+    println(list.diff(this :: es))
+    list.diff(this :: es).isEmpty
   }
-
-
-  private def isConvex = false
 
   private def spline(geo: Geometry): Geometry = geo
 
-  private def merge(list: List[DPoint]): Geometry = {
+  private def merge(list: List[Geometry]): Geometry = {
+
+
+    def join(list: List[Geometry]): Geometry = {
+
+      /*******************************************************************
+       *
+       *        Suche Verbindung zwischen zwei Polygonen
+       *
+       *******************************************************************/
+      def connect(a: Geometry, b: Geometry): Geometry = {
+
+        connection(a, b) match {
+          case ls: LineString => a union b
+          case c: Geometry => a union b union c
+        }
+      }
+
+      /*******************************************************************
+       *
+       *        Verbinde rekursiv alle Polygone zu einem Bereich
+       *
+       *******************************************************************/
+      def mergeAll(set: List[Geometry]): Geometry = set match {
+        case List(a) => a
+        case List(a, b, _*) => mergeAll(a.union(b) :: set.drop(2))
+        case Nil => throw new RuntimeException("Diese Fehler sollte nie aufgerufen werden!" +
+          "\nIrgendwie ist die Bereich verloren gegangen!")
+      }
+
+      /*******************************************************************
+       *
+       *  Verbinde alle Polygone paarweise
+       *
+       *******************************************************************/
+      def mergePaired(list: List[Geometry]): List[Geometry] = {
+        mst(list) map (p => connect(p._1, p._2))
+      }
+
+      /*******************************************************************
+       *
+       *  Merge alle Polygone
+       *
+       *******************************************************************/
+      list match {
+        case List(a) => a
+        case List(_, _*) => mergeAll(mergePaired(list))
+        case _ => throw new Exception("")
+      }
+
+    }
+
+    list.foreach(n => raster.traversableOn(n))
+    val erg = join(list)
+    raster.traversableOff(erg)
+    erg
+  }
+
+  /*private def merge(list: List[Geometry]): Geometry = {
 
     var lastCount = list.size
 
@@ -159,7 +219,7 @@ class DRange(val rangeView: Range) extends DElement {
       }
     }
 
-    join(list map (_.geometry))
+    join(list)
 
 
     /*******************************************************************
@@ -173,10 +233,11 @@ class DRange(val rangeView: Range) extends DElement {
       case _ => erg
     }*/
 
-  }
+  }*/
 
   private def mst(list: List[Geometry]): List[Pair[Geometry, Geometry]] = {
-    val edges = for (i <- list; j <- list if i != j) yield (Edge(i, j, i.distance(j)))
+    val edges = for (i <- list;
+                     j <- list if i != j) yield (Edge(i, j, i.distance(j)))
     kruskal(edges).toList.map(e => (e.v1, e.v2))
   }
 

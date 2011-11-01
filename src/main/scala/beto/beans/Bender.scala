@@ -1,3 +1,4 @@
+/*
 package beto.beans
 
 import _root_.beto.log.Logger
@@ -93,4 +94,4 @@ object Bender extends Logger {
    */
   private def filter(bounds: G): LDP = dpoints filter (p => bounds.intersects(p.puffer))
 
-}
+}*/

@@ -4,12 +4,11 @@ import _root_.beto.log.Logger
 import scala.collection.JavaConversions._
 import com.vividsolutions.jts.triangulate.ConstraintVertex
 import com.vividsolutions.jts.triangulate.quadedge.QuadEdge
-import view.SPoint
 import com.vividsolutions.jts.geom.{LineString, GeometryFactory, Geometry, Coordinate}
 
 
-class DPoint(val spoint: SPoint)
-  extends ConstraintVertex(new Coordinate(spoint.p.scaledX, spoint.p.scaledY)) with DElement {
+class DPoint(val x: Int, val y: Int)
+  extends ConstraintVertex(new Coordinate(x, y)) with DElement {
 
   import DGeometry._
   import DElement._
@@ -20,8 +19,6 @@ class DPoint(val spoint: SPoint)
   lazy val areaOptimal = circle(x, y, meanRadius).getArea
   lazy val ring = circle(x, y, 2 * minRadius - 5)
 
-  lazy val x = spoint.p.scaledX
-  lazy val y = spoint.p.scaledY
   lazy val coordinate = new Coordinate(x, y)
   lazy val geoPoint = geomfact.createPoint(coordinate).buffer(2.5)
   lazy val neighbours = edges map (e => e.otherPoint(this)) collect {

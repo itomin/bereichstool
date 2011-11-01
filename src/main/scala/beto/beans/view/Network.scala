@@ -121,8 +121,7 @@ case class Network(val appl: BeToFrame,
 
 
   def toRange(el: Seq[Element], in: Range) = {
-
-    delaunGraph.toRange(el.map(_.dElement), in.dElement)
+    delaunGraph.toRange(el, in)
   }
 
 
@@ -137,7 +136,7 @@ case class Network(val appl: BeToFrame,
   /**
    *  Erzeugt ein neues Range-Objekt
    */
-  private def newRange(p: Position) = new Range(("Unbekannt_%s").format(rangeCount), p)
+  private def newRange(p: Position) = new Range(("Unbekannt_%s").format(nameIndex), p)
 
 }
 
