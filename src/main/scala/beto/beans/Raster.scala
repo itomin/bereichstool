@@ -78,8 +78,12 @@ class Raster(width: Int, height: Int, size: Double) extends Logger {
     }
   }
 
-  def pathToLine(path: List[ANode[Geometry]]): LineString = {
-    line(path.map(n => n.data.getCentroid.getCoordinate))
+  def pathToLine(path: List[ANode[Geometry]], default: LineString): LineString = {
+    path match {
+      case List() => default
+      case List(_) => default
+      case List(_, _*) => line(path.map(n => n.data.getCentroid.getCoordinate))
+    }
   }
 
 

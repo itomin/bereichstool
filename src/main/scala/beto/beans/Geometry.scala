@@ -92,4 +92,7 @@ object DGeometry {
     new ConvexHull(es flatMap (p => p.coordinates) toArray, new GeometryFactory).getConvexHull.convexHull
   }
 
+  /*def convexHull(es: List[DElement]): Geometry = {
+    new ConvexHull(es.flatMap(p => p.puffer.getCoordinates).toArray, new GeometryFactory).getConvexHull.convexHull
+  }*/
 }

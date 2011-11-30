@@ -4,6 +4,7 @@ import _root_.beto.log.Logger
 import java.awt.Shape
 import com.vividsolutions.jts.awt.ShapeWriter
 import com.vividsolutions.jts.geom.{Coordinate, GeometryFactory, Geometry}
+import view.Drawable
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,6 +33,9 @@ trait DElement {
   import DElement._
   import DGeometry._
 
+  var parent: Option[DElement] = None
+
+  def view: Drawable
   def geometry: Geometry
 
   def puffer: Geometry
@@ -40,7 +44,11 @@ trait DElement {
 
   var visited: Boolean = false
 
+  var tagged = view.isSelected
+
   val areaOptimal: Double
+
+  lazy val isLeaf = true
 
   def touches(o: DElement): Boolean = geometry.touches(o.geometry)
 
@@ -69,5 +77,10 @@ trait DElement {
   }
 
   def contains(c: Coordinate): Boolean = geometry.contains(point(c))
+
+  def isCovered = parent match {
+    case Some(x) => true
+    case None => false
+  }
 
 }

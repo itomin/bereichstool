@@ -18,22 +18,59 @@ class DEdge(val origEdge: QuadEdge) {
   import DElement._
   import DGeometry._
 
-  private lazy val angles = new HashMap[Vertex, Int]()
+  //-------------------------------------------------------------------------------------
+  //
+  //                                  private
+  //
+  //-------------------------------------------------------------------------------------
+  /*private lazy val angles = new HashMap[Vertex, Int]()
   private lazy val lNext: HashMap[Vertex, DEdge] = new HashMap[Vertex, DEdge]()
   private lazy val rNext: HashMap[Vertex, DEdge] = new HashMap[Vertex, DEdge]()
+*/
 
-  lazy val improvable = meanRadius < 1.0 / 2.0 * length
-  var factor: Double = 0.0
+  //-------------------------------------------------------------------------------------
+  //
+  //                                  public
+  //
+  //-------------------------------------------------------------------------------------
+ /* lazy val optimalRadius = if (meanRadius < length / 2.0) meanRadius else length / 2
+  lazy val length = origEdge.getLength
+  var offset = 0.0*/
 
 
-  def otherPoint(n: DPoint): Vertex = {
+  /*(origEdge.dest, origEdge.orig) match {
+    case (p1: DPoint, p2: DPoint) => {
+      radii + (p1 -> startRadius)
+      radii + (p2 -> startRadius)
+    }
+    case (p1: DPoint, _) => {
+      radii + {
+        p1 -> startRadius
+      }
+    }
+    case (_, p2: DPoint) => {
+      radii + {
+        p2 -> startRadius
+      }
+    }
+    case _ => // does not exist
+  }*/
+
+
+  /*  def currentRadius(p: DPoint): Double = radii.get(p) match {
+    case Some(x) => x
+    case None => throw new RuntimeException("Kante unvollständig")
+  }*/
+
+
+  /*def otherPoint(n: DPoint): Vertex = {
     if (origEdge.orig.getX == n.x && n.y == origEdge.orig.getY)
       origEdge.dest
     else
       origEdge.orig
   }
 
-  def length = origEdge.getLength
+  def isImprovable: Boolean = optimalRadius + offset < (length / 2)
 
   def angle(center: DPoint): Int = {
     angles.getOrElseUpdate(center, calcAngle(center))
@@ -51,6 +88,20 @@ class DEdge(val origEdge: QuadEdge) {
     if (!rNext.contains(p)) rNext.put(p, edge)
   }
 
+  def setOffset(off: Double): Double = {
+    val rest = (optimalRadius + off - length / 2)
+    if (rest > 0) {
+      offset = (length / 2) - optimalRadius
+      off - offset
+    } else if (rest == 0) {
+      offset = off
+      off
+    } else {
+      offset = off
+      off
+    }
+  }
+
   def orig: Vertex = origEdge.orig
 
   def dest: Vertex = origEdge.dest
@@ -62,11 +113,9 @@ class DEdge(val origEdge: QuadEdge) {
   def radius(center: DPoint): Double = {
     val ed = getLNext(center) :: getRNext(center) :: this :: Nil
     val ne = ed filter (e => (e.angle(center) - angle(center)).abs < 35)
-    val me = ne minBy (e => e.minRadius)
-    me.minRadius
+    val me = ne minBy (e => e.optimalRadius + e.offset)
+    me.optimalRadius
   }
-
-  def minRadius = if (improvable) meanRadius + factor else 1.0 / 2.0 * length
 
   override def equals(other: Any): Boolean = {
     other match {
@@ -108,6 +157,6 @@ class DEdge(val origEdge: QuadEdge) {
       360 - (math.atan(opp / adj) * 180.0 / math.Pi)
     }
     phi.toInt
-  }
+  }*/
 
 }

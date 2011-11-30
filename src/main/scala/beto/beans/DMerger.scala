@@ -33,44 +33,40 @@ trait Mergeable {
   type LC = List[Coordinate]
 
   val raster: Raster
+  val delaunay: DelaunayGraph
+
   lazy val aSTAR = new AStar(raster.nodes)
 
   implicit def CtoA(c: C): ANode[Geometry] = raster.find(point(c))
 
   def connection(a: G, b: G): G = {
 
-    val points = if (a.convexHull.contains(b) || b.convexHull.contains(a)) {
-      List(start_end_points(a, b))
-    } else {
-      val tan = tangents(a, b)
-      List(tan._1, tan._2)
-    }
+    val aCoos = a.getCoordinates
+    val bCoos = b.getCoordinates
+    val pointNotInPolygon = foreign(a, b)
+    val aConvexB = a.union(b).convexHull
 
-    /*val paths = points.map{
-      p =>
-        println("find for %s %s".format(p._1, p._2))
-        aSTAR.findPath(a.getCentroid.getCoordinate, b.getCentroid.getCoordinate)
-    }*/
-    val (f, t) = start_end_points(a, b)
-    val (from, to) = (CtoA(f), CtoA(t))     //TODO tangenten wieder einbauen
-
-
-
-    val bend = if (from == to) {
-      from.data
-    } else {
-      println("from %s  to %s".format(from, to))
-      val paths = List(aSTAR.findPath(from, to))
-      println("done")
-
-      paths match {
-        case List() => emptyGeometry
-        case List(a) => raster.pathToLine(a)
-        case List(_, _*) => raster.pathToLine(paths.minBy(l => l.size))
+    if (pointNotInPolygon.exists(p => p.puffer.intersects(aConvexB))) {
+      val options = if (a.convexHull.contains(b) || b.convexHull.contains(a)) {
+        List(start_end_points(a, b))
+      } else {
+        val tan = tangents(a, b)
+        List(tan._1, tan._2, start_end_points(a, b))
       }
-    }
 
-    if (bend.isEmpty) bend else bend.buffer(minRadius / 2)
+      val paths = options.map(o => aSTAR.findPath(o._1, o._2))
+      val default = line(a.getCentroid.getCoordinate, b.getCentroid.getCoordinate)
+      val bend = paths match {
+        case List() => emptyGeometry
+        case List(a) => raster.pathToLine(a,default)
+        case List(_, _*) => raster.pathToLine(paths.minBy(l => l.size), default)
+      }
+
+      if (bend.isEmpty) bend else bend.buffer(minRadius / 2)
+
+    } else {
+      aConvexB
+    }
   }
 
 
@@ -83,7 +79,6 @@ trait Mergeable {
     val paired = for (i <- list1; j <- list2) yield (i, j)
     paired <> (p => p._1.distance(p._2)) head
   }
-
 
   private def start_end_points(a: G, b: G): Pair[C, C] = {
     closestPair(a.getCoordinates.tail.toList, b.getCoordinates.tail.toList)
@@ -152,6 +147,31 @@ trait Mergeable {
   }
 
 
+  private def getBounds(a: Geometry, b: Geometry): Tuple4[Double, Double, Double, Double] = {
+    val coords = (a.getCoordinates ++ b.getCoordinates)
+    val sortByX = coords sortWith ((a, b) => a.x < b.x)
+    val sortByY = coords sortWith ((a, b) => a.y < b.y)
+    (sortByX.last.x, sortByX.head.x, sortByY.last.y, sortByY.head.y)
+  }
+
+  private def filter(maxX: Double, minX: Double, maxY: Double, minY: Double): LDP = {
+    val boundArea = tetragon(new C(minX, minY), new C(minX, maxY), new C(maxX, maxY), new C(maxX, minY))
+    delaunay.dpoints.filter(p => boundArea.contains(p.puffer) || boundArea.intersects(p.puffer))
+  }
+
+  def foreign(a: Geometry, b: Geometry): LDE = {
+    val (maxX: Double, minX: Double, maxY: Double, minY: Double) = getBounds(a, b)
+    val all = filter(maxX, minX, maxY, minY)
+    val choosen = all filter (p => a.contains(p.geoPoint) || b.contains(p.geoPoint))
+    all diff choosen
+  }
+
+  /*def foreign(a: Geometry): LDE = {
+    val (maxX: Double, minX: Double, maxY: Double, minY: Double) = getBounds(a, b)
+    val all = filter(maxX, minX, maxY, minY)
+    val choosen = all filter (p => a.contains(p.geoPoint) || b.contains(p.geoPoint))
+    all diff choosen
+  }*/
 }
 
 
