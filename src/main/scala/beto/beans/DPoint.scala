@@ -1,6 +1,7 @@
 package beto.beans
 
 import _root_.beto.log.Logger
+import marching.{Vertex, Cell}
 import scala.collection.JavaConversions._
 import com.vividsolutions.jts.triangulate.ConstraintVertex
 import com.vividsolutions.jts.triangulate.quadedge.QuadEdge
@@ -8,6 +9,89 @@ import com.vividsolutions.jts.geom.{LineString, GeometryFactory, Geometry, Coord
 import view.SPoint
 
 
+class PointModel(val view: SPoint, val raster: Raster)
+  extends ConstraintVertex(new Coordinate(view.p.scaledX, view.p.scaledY)) with DElement with Logger {
+
+  import DGeometry._
+  import DElement._
+
+
+  private val x = view.p.scaledX
+  private val y = view.p.scaledY
+  lazy val center = point(new Coordinate(x, y))
+  lazy val basicGeometry = circle(x, y, minRadius / 2)
+  lazy val basicCells = raster.intersectCells(basicGeometry)
+  lazy val wishArea = math.Pi * math.pow(meanRadius, 2)
+  lazy val centerCell = basicCells.find(cell => cell.geom.intersects(center)).get
+  lazy val basicVertices = basicCells.flatMap(c => c.vertices.filter(v => basicGeometry.contains(v.vertex)))
+  raster.traversableOff(basicCells)
+  raster.lockVertices(basicCells, basicGeometry)
+
+
+  override def enable: List[Cell] = {
+
+    println("WISH CELLs")
+    /*println("wishArea: %s".format(wishArea))
+  println("befor Area: %s".format(raster.getArea(basicCells)))*/
+    raster.activateAllVertices(basicCells)
+    val cells = expandCells(basicCells)
+    println("WISH CELLS")
+    // println("after area: %s".format(raster.getArea(cells)))
+    cells
+  }
+
+  override def disable = {
+    raster.disableVertices(basicGeometry)
+  }
+
+  private def expandCells(cells: List[Cell]): List[Cell] = {
+
+    var topArea: Double = wishArea - raster.getArea(cells)
+    var lastArea: Double = 0
+    basicVertices.foreach(v => v.activate)
+
+    def expandCellsRec(cells: List[Cell]): List[Cell] = {
+
+      // If the area didn't changed after last expand operation, give up. There are no wishArea for Jim!
+      if (topArea != lastArea) {
+
+        // memorize the last area
+        lastArea = topArea
+
+        val contourCells: List[Cell] = cells.filter(c => !c.isEmpty)
+
+        println("cCells: %s".format(contourCells.size))
+
+        contourCells.foreach(c => c.enable)
+
+        val neigh = contourCells.flatMap(c => raster.getNeighbours(c))
+
+        // expanded cells
+        val newCells = (neigh ::: cells).distinct
+
+        /*
+        * enable all vertices of the current cells and subtract the
+        * result from the topArea
+        */
+        topArea = wishArea - raster.getArea(newCells)
+        println("topArea: %s".format(topArea))
+        if (topArea > 200) {
+          expandCellsRec(newCells)
+        } else
+          newCells
+
+      } else {
+        cells
+      }
+    }
+    expandCellsRec(basicCells)
+  }
+
+
+}
+
+
+/*
 class DPoint(val view: SPoint, val delaunay: DelaunayGraph)
   extends ConstraintVertex(new Coordinate(view.p.scaledX, view.p.scaledY)) with DElement {
 
@@ -85,7 +169,7 @@ class DPoint(val view: SPoint, val delaunay: DelaunayGraph)
     var geo = polygon(edges.map(e => e.otherPoint(center)))
     val env = delaunay.intersection(geo).filterNot(e => e.tagged)
 
-   /* println("--------------------  env  ------------------------------------")
+    /* println("--------------------  env  ------------------------------------")
     env.foreach(e => println(e))
     println("---------------------------------------------------------------")*/
 
@@ -110,7 +194,7 @@ class DPoint(val view: SPoint, val delaunay: DelaunayGraph)
 
     //edges.foreach(e => println("%s  trimmed: %s".format(e, e.trimmed)))
 
-   /* println("--------------------  actArea - areaOptimal  -----------------------")
+    /* println("--------------------  actArea - areaOptimal  -----------------------")
     println(geo.getArea - areaOptimal)
     println("--------------------------------------------------------------------")*/
 
@@ -118,7 +202,7 @@ class DPoint(val view: SPoint, val delaunay: DelaunayGraph)
       geo
     } else {
       val diff = edges.filter(e => e.scalable)
- /*     println("--------------------  scalable  -------------------------------")
+      /*     println("--------------------  scalable  -------------------------------")
       diff.foreach(e => println(e))
       println("---------------------------------------------------------------")*/
       if (diff.isEmpty) {
@@ -249,3 +333,4 @@ coords = coords ++ List(coords.head)*/
 
 
 }
+*/

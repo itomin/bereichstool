@@ -1,9 +1,11 @@
 package beto.beans
 
+import _root_.beto.log.Logger
 import view.Element
 import view.Range
 import com.vividsolutions.jts.algorithm.ConvexHull
 import com.vividsolutions.jts.geom._
+import marching.Cell
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,67 +26,64 @@ object DRange {
   }
 }
 
-class DRange(val view: Range, val delaunay: DelaunayGraph) extends DElement with Mergeable {
+class DRange(val view: Range, val delaunay: DelaunayGraph) extends DElement with Logger {
 
   import Kruskal._
   import DElement._
   import DGeometry._
+  import Contouring._
 
   private var children = List[DElement]()
 
   /* Nicht optimierte Bereichsumgebung eines Knotens */
-  lazy val areaOptimal = children.map(_.areaOptimal).sum
+  //  lazy val areaOptimal = children.map(_.areaOptimal).sum
   lazy val raster = delaunay.raster
   override lazy val isLeaf = false
 
-  var geometry: Geometry = emptyGeometry
+  var basicGeometry: Geometry = emptyGeometry
+  var basicCells: List[Cell] = List[Cell]()
   var name = view.name
 
-  /*def increment
+  /**
+   *
+   */
+  def leafs: List[PointModel] = {
+    children.flatMap{
+      el => el match {
+        case el: PointModel => el :: Nil
+        case el: DRange => el.leafs
+      }
+    }
+  }
 
-  def decrement*/
 
-  def ring = puffer.buffer(20).difference(puffer)
-
-  def puffer = geometry
-
+  /**
+   *
+   */
   def exists(e: DElement): Boolean = children.contains(e)
 
+
+  /**
+   *
+   */
   def eachElement(f: DElement => Unit) = children.foreach(e => f(e))
 
-  def increment = geometry = geometry.buffer(5)
 
-  def decrement = geometry = geometry.buffer(5)
-
+  /**
+   *
+   */
   def add(es: Seq[DElement]): Unit = {
     es.foreach{
-      e =>
-        add(e)
-        e.parent = Some(this)
+      e => add(e)
+      e.parent = Some(this)
     }
-    review(es.toList)
-  }
-
-  def review(es: List[DElement]) = {
-    println("%s, %s".format(isConvex(es), geometry.isEmpty))
-    geometry = (isConvex(es), geometry.isEmpty) match {
-      case (true, true) => convexHull(es).buffer(-3)
-      case (true, false) => merge(geometry :: convexHull(es) :: Nil)
-      case (false, true) => merge(es.map(_.geometry)) // .buffer(-3)
-      case (false, false) => merge(geometry :: es.map(_.geometry))
-    }
-    paint
+    review(children.toList)
   }
 
 
-  def paint: Unit = {
-    val ch = children.collect{
-      case r: DRange => r
-    }
-    if (!ch.isEmpty) increment
-    view.deform(shapeWriter.toShape(geometry))
-  }
-
+  /**
+   *
+   */
   def add(e: DElement): Unit = {
     if (!this.exists(e)) {
       children ::= e
@@ -93,27 +92,136 @@ class DRange(val view: Range, val delaunay: DelaunayGraph) extends DElement with
     }
   }
 
-  def leafs: List[DPoint] = children.flatMap{
-    el => el match {
-      case el: DPoint => el :: Nil
-      case el: DRange => el.leafs
-    }
+
+  /**
+   *
+   */
+  def inactive = {
+    raster.inactiveVertices(basicCells, basicGeometry)
+    children.foreach(_.disable)
+  }
+
+  def disable = {
+    println("DISABLE THIS ")
+    raster.disableVertices(basicCells, basicGeometry)
+    println("DISABLE CHILDREN ")
+    children.foreach(_.disable)
+  }
+
+  def enable: List[Cell] = {
+    basicCells //TODO
+  }
+
+  /**
+   *
+   */
+  def update(geom: Geometry) = {
+    println("UPDATE")
+    basicGeometry = geom
+    view.update(shapeWriter.toShape(geom))
+    println("UPDATE DONE")
   }
 
 
-  private def isConvex(es: List[DElement]): Boolean = {
+  /**
+   *
+   */
+  private def review(es: List[DElement]) = {
+    basicCells = basicGeometry.isEmpty match {
+      case true => println("geometry is empty"); collectCells(es)
+      case false => inactive; collectCells(es)
+    }
+    update(contour(basicCells))
+    println("DISABLE")
+    disable
+    println("DISABLE DONE")
+  }
+
+  private def collectCells(list: List[DElement]): List[Cell] = {
+    traversableOn(list)
+
+    val cells = list match {
+      case Nil => throw new Exception("Keine Elemente hinzugefügt")
+      case List(a) => a.enable
+
+      case List(_, _*) => {
+        mst(list) flatMap {
+          case (from, to) =>
+            val (startCell, endCell) = (from.asInstanceOf[PointModel].centerCell, to.asInstanceOf[PointModel].centerCell)
+            val topoCells = raster.connection(startCell, endCell)
+            //val connectedCells = raster.intersectCells(connectionGeom)
+            raster.enableAllVertices(topoCells)
+            topoCells  ::: from.enable ::: to.enable
+        }
+      }
+    }
+    traversableOff(list)
+    cells.distinct
+  }
+
+
+  private def mst(list: List[DElement]): List[Pair[DElement, DElement]] = {
+    val edges = for (i <- list;
+                     j <- list if i != j) yield (Edge(i, j, i.distance(j)))
+    kruskal(edges).toList.map(e => (e.v1, e.v2))
+  }
+
+  private def traversableOn(list: List[DElement]) = {
+    raster.traversableOn(list.flatMap(el => el.basicCells))
+  }
+
+  private def traversableOff(list: List[DElement]) = {
+    raster.traversableOff(list.flatMap(el => el.basicCells))
+  }
+
+  /***************************************************
+   *
+   *
+   *
+   *
+   *            OLD STUFF
+   *
+   *
+   *
+   *
+   ***************************************************/
+
+
+  /*def review(es: List[DElement]) = {
+    /*  geometry = (isConvex(es), geometry.isEmpty) match {
+      case (true, true) => convexHull(es).buffer(-3)
+      case (true, false) => merge(geometry :: convexHull(es) :: Nil)
+      case (false, true) => merge(es.map(_.geometry)) // .buffer(-3)
+      case (false, false) => merge(geometry :: es.map(_.geometry))
+    }
+    paint*/
+    geometry = contour(es.head.asInstanceOf[PointModel].enabledCells)
+    paint
+  }*/
+
+
+  /*  def paint: Unit = {
+    /* val ch = children.collect{
+    case r: DRange => r
+  }
+  if (!ch.isEmpty) increment*/
+    view.deform(shapeWriter.toShape(geometry))
+  }*/
+
+
+  /*private def isConvex(es: List[DElement]): Boolean = {
     val list = delaunay.intersection(convexHull(es))
     println(list)
     val choosen = es.collect{
-      case dp: DPoint => dp :: Nil
+      case dp: PointModel => dp :: Nil
       case dr: DRange => dr.leafs
     }.flatten
     list.diff(this :: es ::: choosen).isEmpty
-  }
+  }*/
 
   private def spline(geo: Geometry): Geometry = geo
 
-  private def merge(list: List[Geometry]): Geometry = {
+  /*  private def merge(list: List[Geometry]): Geometry = {
 
 
     def join(list: List[Geometry]): Geometry = {
@@ -169,15 +277,10 @@ class DRange(val view: Range, val delaunay: DelaunayGraph) extends DElement with
     val erg = join(list)
     raster.traversableOff(erg)
     erg
-  }
+  }*/
 
-  private def mst(list: List[Geometry]): List[Pair[Geometry, Geometry]] = {
-    val edges = for (i <- list;
-                     j <- list if i != j) yield (Edge(i, j, i.distance(j)))
-    kruskal(edges).toList.map(e => (e.v1, e.v2))
-  }
 
-  private def optimize(origGeo: Geometry): Geometry = {
+  /*private def optimize(origGeo: Geometry): Geometry = {
     val env = delaunay.intersection(origGeo).diff(this :: children)
     var newGeo = origGeo
     env.foreach{
@@ -185,7 +288,7 @@ class DRange(val view: Range, val delaunay: DelaunayGraph) extends DElement with
         newGeo = newGeo.difference(el.puffer)
     }
     newGeo
-  }
+  }*/
 
 
   /*

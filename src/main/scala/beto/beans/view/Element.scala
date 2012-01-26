@@ -5,7 +5,7 @@
 
 package beto.beans.view
 
-import _root_.beto.beans.{DRange, DElement, DPoint}
+import _root_.beto.beans.{DRange, DElement}
 import edu.umd.cs.piccolo.util.PPaintContext
 import edu.umd.cs.piccolo.nodes.{PPath, PText}
 import java.awt.geom.{Area, Rectangle2D, Ellipse2D}
@@ -71,7 +71,7 @@ case class Range(override val name: String,
     g2.setStroke(new BasicStroke(2))
   }
 
-  def deform(f: Shape) = {
+  def update(f: Shape) = {
     form = f
     setBounds(f.getBounds2D.getX, f.getBounds2D.getY, f.getBounds2D.getWidth, f.getBounds2D.getHeight)
   }

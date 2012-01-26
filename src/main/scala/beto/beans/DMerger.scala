@@ -1,3 +1,4 @@
+/*
 package beto.beans
 
 import _root_.beto.log.Logger
@@ -27,7 +28,7 @@ trait Mergeable {
   type DE = DElement
   type G = Geometry
   type C = Coordinate
-  type LDP = List[DPoint]
+  type LDP = List[PointModel]
   type LDE = List[DElement]
   type LG = List[Geometry]
   type LC = List[Coordinate]
@@ -58,7 +59,7 @@ trait Mergeable {
       val default = line(a.getCentroid.getCoordinate, b.getCentroid.getCoordinate)
       val bend = paths match {
         case List() => emptyGeometry
-        case List(a) => raster.pathToLine(a,default)
+        case List(a) => raster.pathToLine(a, default)
         case List(_, _*) => raster.pathToLine(paths.minBy(l => l.size), default)
       }
 
@@ -162,7 +163,7 @@ trait Mergeable {
   def foreign(a: Geometry, b: Geometry): LDE = {
     val (maxX: Double, minX: Double, maxY: Double, minY: Double) = getBounds(a, b)
     val all = filter(maxX, minX, maxY, minY)
-    val choosen = all filter (p => a.contains(p.geoPoint) || b.contains(p.geoPoint))
+    val choosen = all filter (p => a.contains(p.minGeom) || b.contains(p.minGeom)) //TODO geoPoint changed to minGEom
     all diff choosen
   }
 
@@ -976,4 +977,4 @@ if (isTight) {
      */
 /*val isTight = allDisturber.exists{
   e1 => allDisturber.exists(e2 => e1 != e2 && e1.ring.intersects(e2.ring))
-}*/
+}*/*/

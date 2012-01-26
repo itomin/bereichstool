@@ -5,6 +5,7 @@ import java.awt.Shape
 import com.vividsolutions.jts.awt.ShapeWriter
 import com.vividsolutions.jts.geom.{Coordinate, GeometryFactory, Geometry}
 import view.Drawable
+import marching.Cell
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,7 +25,15 @@ object DElement {
 
   var minRadius: Double = _
 
+  var cellSize: Double = _
 
+
+  /*def closestCellPair(that: DElement, other: DElement): Pair[Cell, Cell] = {
+    val pairs = (for (i <- that.basicCells; j <- other.basicCells) yield (i, j))
+    pairs.minBy{
+      case (a, b) => a.geom.distance(b.geom)
+    }
+  }*/
 }
 
 
@@ -36,51 +45,73 @@ trait DElement {
   var parent: Option[DElement] = None
 
   def view: Drawable
-  def geometry: Geometry
 
-  def puffer: Geometry
+  def raster: Raster
 
-  def ring: Geometry
+  def basicCells: List[Cell]
 
-  var visited: Boolean = false
+  def basicGeometry: Geometry
 
-  var tagged = view.isSelected
+  def enable: List[Cell]
 
-  val areaOptimal: Double
+  def disable: Unit
 
   lazy val isLeaf = true
 
-  def touches(o: DElement): Boolean = geometry.touches(o.geometry)
+   def distance(other: DElement): Double = {
+    (this, other) match {
+      case (a: PointModel, b: PointModel) => a.center.distance(b.center)
+      case (a: PointModel, b: DRange) => 1
+      case (a: DRange, b: PointModel) => 1
+      case (a: DRange, b: DRange) => 1
+    }
+  }
 
-  def touches(o: Geometry): Boolean = geometry.touches(geometry)
+  /*def geometry: Geometry
 
-  def touches(c: Coordinate): Boolean = geometry.touches(point(c))
+def puffer: Geometry
 
-  def union(o: DElement): Geometry = geometry.union(o.geometry)
+def ring: Geometry*/
 
-  def union(o: Geometry): Geometry = geometry.union(geometry)
+  //var visited: Boolean = false
 
-  def intersects(o: DElement): Boolean = geometry.intersects(o.geometry)
+  //var tagged = view.isSelected
 
-  def intersects(o: Geometry): Boolean = geometry.intersects(geometry)
 
-  def coordinates: List[Coordinate] = geometry.getCoordinates.toList
+  //val areaOptimal: Double
 
-  def getArea: Double = geometry.getArea
 
-  def distance(o: DElement): Double = {
+  /* def touches(o: DElement): Boolean = geometry.touches(o.geometry)
+
+def touches(o: Geometry): Boolean = geometry.touches(geometry)
+
+def touches(c: Coordinate): Boolean = geometry.touches(point(c))
+
+def union(o: DElement): Geometry = geometry.union(o.geometry)
+
+def union(o: Geometry): Geometry = geometry.union(geometry)
+
+def intersects(o: DElement): Boolean = geometry.intersects(o.geometry)
+
+def intersects(o: Geometry): Boolean = geometry.intersects(geometry)
+
+def coordinates: List[Coordinate] = geometry.getCoordinates.toList
+
+def getArea: Double = geometry.getArea*/
+
+  /*def distance(o: DElement): Double = {
     //debug("%s - %s t: %s  i: %s".format(this.toString, o.toString, this.touches(o), this.intersects(o)))
     if (this.touches(o) || this.intersects(o))
       0
     else
       (for (i <- coordinates; j <- o.coordinates) yield (i.distance(j))).min
-  }
+  }*/
 
-  def contains(c: Coordinate): Boolean = geometry.contains(point(c))
+  /*def contains(c: Coordinate): Boolean = geometry.contains(point(c))*/
 
-  def isCovered = parent match {
+  /* def isCovered = parent match {
     case Some(x) => true
     case None => false
-  }
+  }*/
 
 }

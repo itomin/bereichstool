@@ -20,12 +20,23 @@ import com.vividsolutions.jts.geom.{Geometry, GeometryFactory, Envelope, Coordin
 
 class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger {
 
-  DElement.meanRadius = 30
-  DElement.minRadius = 20
+  //DElement.minRadius = 20
+
+  lazy val coos: List[Coordinate] = spoints.map(p => new Coordinate(p.p.scaledX, p.p.scaledY))
+  lazy val dists: List[Double] = for (i <- coos; j <- coos if i != j) yield (i.distance(j))
+
+  DElement.minRadius = dists.min - 2
+  DElement.meanRadius = DElement.minRadius / 2  + 20
+  DElement.cellSize = DElement.minRadius.toInt / 5
+
+  println("Closest pair: %s".format(DElement.minRadius))
+  println("Cell: %s".format(DElement.cellSize))
+
+  lazy val raster = new Raster(netview.w, netview.h, DElement.minRadius)
 
   /* Simone-Punkte zu Delaunay-Punkte konvertieren */
   lazy val pointsMap = HashMap(spoints.map{
-    s => (s.name, new DPoint(s, this))
+    s => (s.name, new PointModel(s, raster))
   }.toSeq: _*)
 
   /* */
@@ -35,7 +46,7 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
 
   def dranges = rangesMap.values.toList
 
-  /* Delaunay-Umgebung initialisieren */
+  /*/* Delaunay-Umgebung initialisieren */
   lazy val env = new Envelope
 
   /* Delaunay-Triangulator initialisieren */
@@ -45,7 +56,7 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
   lazy val subdiv = {
     dpoints.foreach(d => env.expandToInclude(d.coordinate))
     new QuadEdgeSubdivision(env, 3)
-  }
+  }*/
   /* */
   lazy val geomfact = new GeometryFactory
 
@@ -97,6 +108,7 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
   }*/
 
   debug("Delaunay Graph initialisiert %s".format(dpoints.size))
+
   /* Durchschnittsradius berechnen (harmonischer Mitterlwert)*/
   //lazy val relEdges = edges.filter(e => e.orig.isInstanceOf[DPoint] && e.dest.isInstanceOf[DPoint])
 
@@ -105,9 +117,8 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
   //relEdges.map(e => e.length).min / 2 // DElement.meanRadius / 2 //if (DElement.meanRadius / 3 < 20) 20 else
   //DMerger.createInstance(this)
 
-  lazy val raster = new Raster(netview.w, netview.h, DElement.minRadius)
 
-  dpoints.foreach(g => raster.traversableOff(g.puffer))
+  //dpoints.foreach(g => raster.traversableOff(g.puffer))
 
 
   /*  */
@@ -116,11 +127,11 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
     drange.add(el.map(e => elements(e.name)))
   }
 
-  def intersection(geo: Geometry): List[DElement] = {
+  /*def intersection(geo: Geometry): List[DElement] = {
     (dpoints ::: dranges)
       .filter(el => !el.isCovered)
       .filter(el => geo.intersects(el.puffer) && !geo.touches(el.puffer))
-  }
+  }*/
 
   private def ranges(vrange: Range): DRange = {
     rangesMap.getOrElseUpdate(vrange.name, new DRange(vrange, this))
