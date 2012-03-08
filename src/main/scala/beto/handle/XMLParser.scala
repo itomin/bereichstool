@@ -11,7 +11,6 @@ import collection.mutable.HashMap
 import _root_.beto.beans.view._
 
 
-
 abstract class XMLParser[Bean](appl: BeToFrame) extends Logger {
 
   def fromXML(path: String): Bean

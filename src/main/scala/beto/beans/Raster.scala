@@ -41,17 +41,19 @@ class Raster(width: Int, height: Int, nodeSize: Double) extends Logger {
     }
   }
 
+  private lazy val off = 200
 
   //  Anzahl Zellen in die Breite
-  private lazy val indexWidth = width / nodeSize
+  private lazy val indexWidth = (width + off) / nodeSize
 
   //  Anzahl Zellen in die Höhe
-  private lazy val indexHeight = height / nodeSize
+  private lazy val indexHeight = (height + off) / nodeSize
+
 
   //  Darstellungfläche rastern ( 2D - Array )
   private lazy val raster: Array[Array[ANode]] =
-    Array.range(0, math.round(indexHeight).toInt).map{
-      r => Array.range(0, math.round(indexWidth).toInt).map{
+    Array.range(-off / 2, math.round(indexHeight).toInt).map{
+      r => Array.range(-off / 2, math.round(indexWidth).toInt).map{
         c =>
         //  jede Zelle ist ein JTS-Rechteck
           val data = tetragon(
@@ -71,7 +73,7 @@ class Raster(width: Int, height: Int, nodeSize: Double) extends Logger {
       }
     }
 
-  private lazy val cells = {
+  lazy val cells = {
     val map = HashMap[Pair[Int, Int], Cell]()
     raster.foreach{
       nRow => nRow.foreach{
@@ -114,19 +116,20 @@ class Raster(width: Int, height: Int, nodeSize: Double) extends Logger {
   lazy val aSTAR = new AStar(nodes)
 
 
-  def traversableOn(cells: List[Cell]) = {
+  def traversableOn(cells: Set[Cell]) = {
     cells.foreach(cells => cells.parent.traversable = true)
   }
 
-  def traversableOff(cells: List[Cell]) = {
+  def traversableOff(cells: Set[Cell]) = {
     cells.foreach(cells => cells.parent.traversable = false)
   }
 
-  def intersectCells(g: Geometry): List[Cell] = filterNodes(g).flatMap{
-    n => n.cells.filter(cell => cell.intersects(g))
+  def intersectCells(g: Geometry): Set[Cell] = {
+    //filterNodes(g).flatMap{
+    cells.values.filter(cell => cell.intersects(g) || g.touches(cell.geom)).toSet
   }
 
-  def lockVertices(cells: List[Cell], g: Geometry) = cells.foreach{
+  def lockVertices(cells: Set[Cell], g: Geometry) = cells.foreach{
     cell => cell.vertices.filter(v => g.contains(v.vertex)).foreach(v => v.lock)
     //TODO besser cell.lock und cell.lock(geom) (verdecken der Datenstruktur)
   }
@@ -135,7 +138,7 @@ class Raster(width: Int, height: Int, nodeSize: Double) extends Logger {
     cell => cell.vertices.filter(v => g.contains(v.vertex)).foreach(v => v.activate)
   }
 
-  def activateVertices(cells: List[Cell], g: Geometry) = cells.foreach{
+  def activateVertices(cells: Set[Cell], g: Geometry) = cells.foreach{
     cell => cell.vertices.filter(v => g.contains(v.vertex)).foreach(v => v.activate)
   }
 
@@ -143,7 +146,7 @@ class Raster(width: Int, height: Int, nodeSize: Double) extends Logger {
     cell => cell.vertices.filter(v => g.contains(v.vertex)).foreach(v => v.enable)
   }
 
-  def enableVertices(cells: List[Cell], g: Geometry) = cells.foreach{
+  def enableVertices(cells: Set[Cell], g: Geometry) = cells.foreach{
     cell => cell.vertices.filter(v => g.contains(v.vertex)).foreach(v => v.enable)
   }
 
@@ -151,27 +154,27 @@ class Raster(width: Int, height: Int, nodeSize: Double) extends Logger {
     cell => cell.vertices.filter(v => g.contains(v.vertex)).foreach(v => v.disable)
   }
 
-  def disableVertices(cells: List[Cell], g: Geometry) = cells.foreach{
+  def disableVertices(cells: Set[Cell], g: Geometry) = cells.foreach{
     cell => cell.vertices.filter(v => g.contains(v.vertex)).foreach(v => v.disable)
   }
 
-  def enableAllVertices(cells: List[Cell]) = cells.foreach{
+  def enableAllVertices(cells: Set[Cell]) = cells.foreach{
     cell => cell.vertices.foreach(v => v.enable)
   }
 
-  def activateAllVertices(cells: List[Cell]) = cells.foreach{
+  def activateAllVertices(cells: Set[Cell]) = cells.foreach{
     cell => cell.vertices.foreach(v => v.activate)
   }
 
-  def disableAllVertices(cells: List[Cell]) = cells.foreach{
+  def disableAllVertices(cells: Set[Cell]) = cells.foreach{
     cell => cell.vertices.foreach(v => v.disable)
   }
 
-  def inactiveVertices(cells: List[Cell], g: Geometry) = cells.foreach{
+  def inactiveVertices(cells: Set[Cell], g: Geometry) = cells.foreach{
     cell => cell.vertices.filter(v => g.contains(v.vertex)).foreach(v => v.delete)
   }
 
-  def getArea(cells: List[Cell]) = cells.map{
+  def getArea(cells: Set[Cell]) = cells.toList.map{
     cell => cell.getArea
   }.sum
 
@@ -205,19 +208,48 @@ class Raster(width: Int, height: Int, nodeSize: Double) extends Logger {
 
   }
 
+  def getNeighbours(node: ANode): List[ANode] = {
+    nodes.filter{
+      n =>
+        n.row <= node.row + 1 &&
+          n.row >= node.row - 1 &&
+          n.col <= node.col + 1 &&
+          n.col >= node.col - 1
+    }
+  }
 
   def findConnection(startCell: Cell, endCell: Cell): Geometry = {
     aSTAR.findPath(startCell.parent, endCell.parent)
   }
 
-  def connection(startCell: Cell, endCell: Cell): List[Cell] = {
-    val path = aSTAR.findPath(startCell.parent, endCell.parent)
-
-    path match {
-      case List() => Nil
-      case List(a) => a.cells
-      case List(_, _*) => path.flatMap(pC => pC.cells)
+  def connection(start: ANode, end: ANode): Set[Cell] = {
+    val path = time("A*"){aSTAR.findPath(start, end)}
+    val geo = path match {
+      case List() => emptyGeometry
+      case List(a) => a.data
+      case List(_, _*) => line(path.map(n => n.data.getCentroid.getCoordinate)).buffer(nodeSize / 2)
     }
+
+    var acells: Set[ANode] = path.flatMap(n => n :: getNeighbours(n)).toSet
+    var cells: Set[Cell] = acells.flatMap(a => a.cells)
+
+    //enableVertices(geo)
+    cells = cells.filter(c => c.intersects(geo)).toSet
+    cells.foreach(c => c.enable)
+    val nachbarn: Set[Cell] = cells.flatMap(c => getNeighbours(c))
+
+    cells ++ nachbarn
+    /*path match {
+      case List(a) => a.cells.toSet
+      case List(_, _*) => path.flatMap{
+        pC =>
+          val cells = pC.cells
+          cells.foreach(c => c.enable)
+          cells ::: cells.flatMap(c => getNeighbours(c))
+      }.toSet
+    }*/
+
+
   }
 
 

@@ -20,7 +20,7 @@ object Mode extends Enumeration {
 }
 
 
-case class Vertex(val x: Double, val y: Double) {
+case class Vertex(val x: Double, val y: Double, parent: Cell) {
 
 
   import Mode._
@@ -32,6 +32,10 @@ case class Vertex(val x: Double, val y: Double) {
 
   def isActive = mode == ACTIVE
 
+  def isLocked = mode == LOCKED
+
+  def isBusy = mode == BUSY
+
   /**
    *
    */
@@ -40,7 +44,7 @@ case class Vertex(val x: Double, val y: Double) {
   /**
    *
    */
-  def lock = if(mode == LOCKED) println("IS ALREADY LOCKED") else mode = LOCKED
+  def lock = mode = LOCKED
 
   /**
    *
@@ -104,24 +108,24 @@ class Cell(val geom: Geometry, val parent: ANode) {
 
   val x = center.x
   val y = center.y
-
+  var visited = false
   var row: Int = _
   var col: Int = _
 
   // Bottom left
-  var bl = Vertex(x - offset, y + offset)
+  var bl = Vertex(x - offset, y + offset, this)
 
   // Upper left
-  var ul = Vertex(x - offset, y - offset)
+  var ul = Vertex(x - offset, y - offset, this)
 
   // Upper  right
-  var ur = Vertex(x + offset, y - offset)
+  var ur = Vertex(x + offset, y - offset, this)
 
   // Bottom right
-  var br = Vertex(x + offset, y + offset)
+  var br = Vertex(x + offset, y + offset, this)
 
   // vertex set
-  lazy val vertices = Array(bl, ul, ur, br)
+  lazy val vertices: Array[Vertex] = Array(bl, ul, ur, br)
 
 
   def activate = vertices.foreach(v => v.activate)
@@ -136,7 +140,7 @@ class Cell(val geom: Geometry, val parent: ANode) {
       vertices.foreach(v => v.disable)
   }
 
-  def get: Pair[C, C] = lookUp(this)
+  def get: List[Pair[C, C]] = lookUp(this)
 
   def bit: Int = (bl.bit | (ul.bit << 3)) | ((ur.bit << 2) | (br.bit << 1))
 
@@ -146,9 +150,24 @@ class Cell(val geom: Geometry, val parent: ANode) {
 
   def isEmpty = bit == OOOO || bit == IIII
 
+  def isActive = bit == OOOO || bit == IIII
+
+  def isAmbiguous = bit == 5 || bit == 10
+
+  def isLocked = vertices.exists(v => v.isLocked)
+
+  def isBusy = vertices.exists(v => v.isBusy)
+
   def activeVertices: Int = vertices.filter(v => v.isActive).size
 
-  def getArea = lookUpArea(this)
+  def getArea: Double = lookUpArea(this)
 
   override def toString = "(%s,  %s)  (%s | %s | %s | %s)".format(x, y, bl.bit, ul.bit, ur.bit, br.bit)
+
+  override def equals(that: Any): Boolean = that match {
+    case other: Cell => x == other.x && y == other.y
+    case _ => false
+  }
+
+  //override def hashCode = x
 }

@@ -4,8 +4,8 @@ import _root_.beto.log.Logger
 import java.awt.Shape
 import com.vividsolutions.jts.awt.ShapeWriter
 import com.vividsolutions.jts.geom.{Coordinate, GeometryFactory, Geometry}
-import view.Drawable
-import marching.Cell
+import marching.{Vertex, Cell}
+import view.{ANode, Drawable}
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,26 +46,66 @@ trait DElement {
 
   def view: Drawable
 
+  var isActiv = false
+
+  val name = view.name
+
   def raster: Raster
 
-  def basicCells: List[Cell]
+  def basicCells: Set[Cell]
+
+  def basicVertices: Set[Vertex]
 
   def basicGeometry: Geometry
 
-  def enable: List[Cell]
+  def enable: Set[Cell]
 
   def disable: Unit
 
   lazy val isLeaf = true
 
-   def distance(other: DElement): Double = {
-    (this, other) match {
+  def distance(other: DElement): Double = {
+    val (from, to) = startEnd(other)
+    from.data.distance(to.data)
+    /*(this, other) match {
       case (a: PointModel, b: PointModel) => a.center.distance(b.center)
-      case (a: PointModel, b: DRange) => 1
-      case (a: DRange, b: PointModel) => 1
-      case (a: DRange, b: DRange) => 1
+
+      case (a: PointModel, b: DRange) => (for (i <- b.astarCells) yield {
+        i.data.getCentroid.distance(a.center)
+      }).min
+
+      case (a: DRange, b: PointModel) => (for (i <- a.astarCells) yield {
+        i.data.getCentroid.distance(b.center)
+      }).min
+
+      case (a: DRange, b: DRange) => (for (i <- a.astarCells; j <- b.astarCells) yield {
+        i.data.getCentroid.distance(j.data.getCentroid)
+      }).min
+    }*/
+
+  }
+
+  def startEnd(other: DElement): Pair[ANode, ANode] = {
+    (this, other) match {
+      case (a: PointModel, b: PointModel) => (a.centerCell, b.centerCell)
+
+      case (a: PointModel, b: DRange) =>
+        val cZ = (for (i <- b.astarCells) yield ((i.data.getCentroid.distance(a.center), i))).minBy(_._1)
+        (cZ._2, a.centerCell)
+
+      case (a: DRange, b: PointModel) =>
+        val cZ = (for (i <- a.astarCells) yield ((i.data.getCentroid.distance(b.center), i))).minBy(_._1)
+        (cZ._2, b.centerCell)
+
+      case (a: DRange, b: DRange) =>
+        val cZ = (for (i <- a.astarCells; j <- b.astarCells) yield {
+          (i.data.getCentroid.distance(j.data.getCentroid), i, j)
+        }).minBy(_._1)
+        (cZ._2, cZ._3)
     }
   }
+
+  def isActivate = isActiv
 
   /*def geometry: Geometry
 

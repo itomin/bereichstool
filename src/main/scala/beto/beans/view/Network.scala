@@ -10,6 +10,7 @@ import _root_.beto.log.Logger
 import _root_.beto.view.BeToFrame
 import collection.mutable.HashMap
 import geometry.Point
+import main.scala.beto.handle.ExcelNodes
 
 
 object Network {
@@ -56,8 +57,7 @@ case class Network(val appl: BeToFrame,
                    val edges: HashMap[Array[Element], SEdge]) extends Logger {
 
 
-  debug("Graph initialisiert")
-
+  import ExcelNodes._
   import Network._
 
   /*
@@ -69,7 +69,7 @@ case class Network(val appl: BeToFrame,
   lazy val w = appl.editorWidth
   lazy val h = appl.editorHeight
 
-
+  debug("%s Punkte, davon werden %s geplottet.".format(points.values.size, allPoints.size))
   val delaunGraph = new DelaunayGraph(allPoints.map(_.asInstanceOf[SPoint]), this)
 
   /*
@@ -79,15 +79,19 @@ case class Network(val appl: BeToFrame,
   lazy val graphEditor = appl.getGraphEditor
 
   /* Für den Fall, dass man durch alle Knoten iterieren muss */
+  //lazy val allPoints = points.values.filter(p => excelNodes.contains(p.name)).toList.drop(500)
   lazy val allPoints = points.values.toList
+
 
   /*
   * Koordinaten der Punkte müssen zunächst auf das gegebene Koordinatensystem
   * des Darstellungspanels skaliert werden
   */
   if (appl.editorWidth < maxX(allPoints)) {
-    Position.scaleX = (a: Int) => (a - minX(allPoints)) * (appl.editorWidth - 0) / (maxX(allPoints) - minX(allPoints))
-    Position.scaleY = (a: Int) => (a - minY(allPoints)) * (appl.editorHeight - 0) / (maxY(allPoints) - minY(allPoints))
+    val off = 100
+    Position.scaleX = (a: Int) => ((a - minX(allPoints)) * (appl.editorWidth - off) / ((maxX(allPoints) - minX(allPoints))) + off / 2)
+    Position.scaleY = (a: Int) => ((a - minY(allPoints)) * (appl.editorHeight - off) / ((maxY(allPoints) - minY(allPoints))) + off / 2)
+    allPoints.foreach(p => p.updateBounds)
   }
 
   /*
@@ -110,6 +114,8 @@ case class Network(val appl: BeToFrame,
    * Iteriert durch jeden Knoten
    */
   def eachNode(f: Element => Unit) = allPoints.foreach(e => f(e))
+
+  def eachEdge(f: SEdge => Unit) = edges.values.foreach(e => f(e))
 
   /**
    * Erzeugt einen neuen Bereich und ordnet ihn in den Bereichsbaum ein

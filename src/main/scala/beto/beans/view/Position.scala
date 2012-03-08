@@ -11,8 +11,7 @@ import scala.math
  * To change this template use File | Settings | File Templates.
  */
 
-class Position(val x: Int, val y: Int) {
-
+class Position(var x: Int, var y: Int) {
 
   def scaledX: Int = Position.scaleX(x)
 

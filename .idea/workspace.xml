@@ -4,26 +4,37 @@
     <bookmark url="file://$PROJECT_DIR$/src/main/scala/beto/beans/DelaunayGraph.scala" line="57" mnemonic="0" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5599585e-9365-40bf-ba27-7c03d727b814" name="Default" comment="bend done">
+    <list default="true" id="5599585e-9365-40bf-ba27-7c03d727b814" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/scala/beto/handle/ExcelNodes.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/dependencies" afterPath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/dependencies" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/external" afterPath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/external" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/generated_files" afterPath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/generated_files" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/hashes" afterPath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/hashes" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/projects" afterPath="$PROJECT_DIR$/project/build/target/scala_2.7.7/analysis/projects" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/Main.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/Main.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/DEdge.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/DEdge.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/Contouring.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/Contouring.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/DElement.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/DElement.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/DMerger.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/DMerger.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/DPoint.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/DPoint.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/DRange.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/DRange.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/DelaunayGraph.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/DelaunayGraph.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/Geometry.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/Geometry.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/Raster.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/Raster.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/marching/Cell.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/marching/Cell.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/marching/LookUpTable.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/marching/LookUpTable.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/view/Drawable.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/view/Drawable.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/view/Element.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/view/Element.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/view/Network.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/view/Network.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/view/Position.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/view/Position.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/beans/view/SEdge.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/beans/view/SEdge.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/handle/XMLParser.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/handle/XMLParser.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/view/GraphEditor.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/view/GraphEditor.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/view/Gui.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/view/Gui.scala" />
+    </list>
+    <list id="3c54a9d4-0c57-4cb8-bb08-33f2620178b2" name="Rejected commit: Default" comment="ms">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala/beto/log/Logger.scala" afterPath="$PROJECT_DIR$/src/main/scala/beto/log/Logger.scala" />
     </list>
     <ignored path="Bereichstool.iws" />
     <ignored path=".idea/workspace.xml" />
+    <file path="$PROJECT_DIR$/src/main/scala/beto/log/Logger.scala" changelist="5599585e-9365-40bf-ba27-7c03d727b814" time="1327593045998" ignored="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,64 +113,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="DelaunayGraph.scala" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="DelaunayGraph.scala" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DelaunayGraph.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="121" column="71" selection-start="3932" selection-end="3932" vertical-scroll-proportion="0.0">
+            <state line="36" column="34" selection-start="1206" selection-end="1206" vertical-scroll-proportion="0.04178273">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DPoint.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DPoint.scala">
+      <file leaf-file-name="Network.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/view/Network.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="110" column="6" selection-start="3604" selection-end="3604" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Geometry.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/Geometry.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="90" column="6" selection-start="1837" selection-end="1837" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Drawable.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/view/Drawable.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="29" selection-start="596" selection-end="596" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Element.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/view/Element.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="43" column="56" selection-start="1112" selection-end="1120" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DElement.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DElement.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="46" column="30" selection-start="811" selection-end="811" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DEdge.scala" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DEdge.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="133" column="0" selection-start="3498" selection-end="3498" vertical-scroll-proportion="0.0">
+            <state line="82" column="2" selection-start="2319" selection-end="2319" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -168,16 +134,70 @@
       <file leaf-file-name="DRange.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DRange.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="86" column="47" selection-start="2108" selection-end="2108" vertical-scroll-proportion="-6.44">
+            <state line="193" column="45" selection-start="4375" selection-end="4375" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ANode.scala" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="Raster.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/Raster.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="225" column="53" selection-start="6447" selection-end="6447" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Gui.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/view/Gui.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="426" column="35" selection-start="11928" selection-end="11928" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="XMLParser.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/handle/XMLParser.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="83" column="54" selection-start="2005" selection-end="2005" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ANode.scala" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/astar/ANode.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="53" selection-start="231" selection-end="231" vertical-scroll-proportion="0.20107238">
+            <state line="43" column="0" selection-start="907" selection-end="907" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DElement.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DElement.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="66" column="6" selection-start="1221" selection-end="1221" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LookUpTable.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/marching/LookUpTable.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="74" column="50" selection-start="2670" selection-end="2672" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Cell.scala" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/marching/Cell.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="99" column="0" selection-start="1495" selection-end="1495" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -197,21 +217,21 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/Sort.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/Order.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/astar/ANode.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/astar/AStar.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/beto/Main.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DMerger.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/Raster.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/Selection.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/beto/event/ElementMouseEventHandler.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/beto/view/GraphEditor.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/view/Drawable.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DElement.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DEdge.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/Geometry.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/marching/LookUpTable.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/astar/AStar.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/astar/ANode.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DPoint.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/view/GraphEditor.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/marching/Cell.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/view/Element.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/Contouring.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/handle/XMLParser.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/view/Network.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/beans/Raster.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DRange.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala/beto/view/Gui.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/beto/beans/DelaunayGraph.scala" />
       </list>
     </option>
@@ -269,231 +289,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="Favorites" />
-      <pane id="PackagesPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala.beto" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala.beto" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="view" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala.beto" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="view" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Gui.scala" />
-              <option name="myItemType" value="org.jetbrains.plugins.scala.components.ScalaDefsProjectViewProvider$MyClassOwnerTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala.beto" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="beans" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala.beto" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="beans" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DRange.scala" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala.beto" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="beans" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="view" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala.beto" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="beans" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="view" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Element.scala" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala.beto" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="beans" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="astar" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Bereichstool" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -624,18 +419,66 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Favorites" />
+      <pane id="PackagesPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bereichstool" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Bereichstool" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bereichstool" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Bereichstool" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala.beto" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="bereichstool" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Bereichstool" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="GenerateAntBuildDialog.generateIdeaHomeProperty" value="false" />
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="project.structure.last.edited" value="Global Libraries" />
+    <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="GenerateAntBuildDialog.generateSingleFile" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="options.lastSelected" value="reference.settingsdialog.IDE.editor.colors.Properties" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/data" />
     <property name="GenerateAntBuildDialog.inclineRuntiemClasspath" value="false" />
     <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
     <property name="project.structure.side.proportion" value="0.1137787" />
@@ -835,7 +678,7 @@
     </configuration>
     <configuration default="false" name="BeTo" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="beto.Main" />
-      <option name="VM_PARAMETERS" value="" />
+      <option name="VM_PARAMETERS" value="-Xmx1152m" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -886,6 +729,7 @@
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="5599585e-9365-40bf-ba27-7c03d727b814" name="Default" comment="" />
+      <changelist id="3c54a9d4-0c57-4cb8-bb08-33f2620178b2" name="Rejected commit: Default" comment="ms" />
       <created>1308690249418</created>
       <updated>1308690249418</updated>
     </task>
@@ -912,27 +756,27 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="24" width="1280" height="749" extended-state="0" />
+    <frame x="0" y="27" width="1280" height="746" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290735" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="SBT Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3290735" sideWeight="0.0" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="SBT Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32744783" sideWeight="0.0" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32923076" sideWeight="0.0" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3258786" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3258427" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="simpleUML" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24735558" sideWeight="0.076677315" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3280507" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24816924" sideWeight="0.6948882" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32818848" sideWeight="0.6846276" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3295362" sideWeight="0.6709265" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3295362" sideWeight="0.67255217" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290735" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3226837" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32747602" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32102728" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32744783" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.24979658" sideWeight="0.6709265" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
     </layout>
@@ -951,7 +795,7 @@
     <option name="CHANGED_ON_SERVER_INTERVAL" value="60" />
     <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="bend done" />
+    <option name="LAST_COMMIT_MESSAGE" value="ms" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -970,6 +814,8 @@
     <MESSAGE value="bendededed" />
     <MESSAGE value="ugly bend" />
     <MESSAGE value="bend done" />
+    <MESSAGE value="finished commit (next part -&gt; marching squares (f***))" />
+    <MESSAGE value="ms" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -979,90 +825,86 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/Selection.scala">
+    <entry file="jar:///usr/local/scala/src/scala-library-src.jar!/scala/collection/mutable/HashMap.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="32" selection-start="812" selection-end="812" vertical-scroll-proportion="0.0" />
+        <state line="75" column="43" selection-start="2757" selection-end="2757" vertical-scroll-proportion="0.3313783" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/view/Gui.scala">
+    <entry file="jar://$PROJECT_DIR$/lib/jts-1.12.jar!/com/vividsolutions/jts/awt/ShapeWriter.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="393" column="41" selection-start="11396" selection-end="11396" vertical-scroll-proportion="9.718411" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/view/GraphEditor.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="92" column="3" selection-start="2602" selection-end="2602" vertical-scroll-proportion="1.4404145" />
-      </provider>
-    </entry>
-    <entry file="jar:///usr/lib/jvm/java-6-sun-1.6.0.26/src.zip!/java/security/AccessControlContext.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="0" selection-start="3319" selection-end="3319" vertical-scroll-proportion="0.3324397" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/event/ElementMouseEventHandler.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="46" selection-start="333" selection-end="333" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/view/Network.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="123" column="21" selection-start="3701" selection-end="3701" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/astar/AStar.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="108" column="54" selection-start="3287" selection-end="3287" vertical-scroll-proportion="0.4028103" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DelaunayGraph.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="121" column="71" selection-start="3932" selection-end="3932" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DPoint.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="110" column="6" selection-start="3604" selection-end="3604" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/Geometry.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="90" column="6" selection-start="1837" selection-end="1837" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/view/Drawable.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="29" selection-start="596" selection-end="596" vertical-scroll-proportion="0.0" />
+        <state line="18" column="26" selection-start="944" selection-end="944" vertical-scroll-proportion="0.35973597" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/view/Element.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="56" selection-start="1112" selection-end="1120" vertical-scroll-proportion="0.0" />
+        <state line="94" column="0" selection-start="2254" selection-end="2254" vertical-scroll-proportion="0.41935483" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DElement.scala">
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/Geometry.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="30" selection-start="811" selection-end="811" vertical-scroll-proportion="0.0" />
+        <state line="27" column="50" selection-start="579" selection-end="579" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DEdge.scala">
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/view/GraphEditor.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="133" column="0" selection-start="3498" selection-end="3498" vertical-scroll-proportion="0.0" />
+        <state line="112" column="5" selection-start="3212" selection-end="3212" vertical-scroll-proportion="0.516129" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/Contouring.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="76" column="6" selection-start="2426" selection-end="2426" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DelaunayGraph.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="34" selection-start="1206" selection-end="1206" vertical-scroll-proportion="0.04178273">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/view/Network.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="82" column="2" selection-start="2319" selection-end="2319" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DRange.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="47" selection-start="2108" selection-end="2108" vertical-scroll-proportion="-6.44">
-          <folding />
-        </state>
+        <state line="193" column="45" selection-start="4375" selection-end="4375" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/Raster.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="225" column="53" selection-start="6447" selection-end="6447" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/view/Gui.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="426" column="35" selection-start="11928" selection-end="11928" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/handle/XMLParser.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="83" column="54" selection-start="2005" selection-end="2005" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/astar/ANode.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="53" selection-start="231" selection-end="231" vertical-scroll-proportion="0.20107238">
-          <folding />
-        </state>
+        <state line="43" column="0" selection-start="907" selection-end="907" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/DElement.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="66" column="6" selection-start="1221" selection-end="1221" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/marching/LookUpTable.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="74" column="50" selection-start="2670" selection-end="2672" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala/beto/beans/marching/Cell.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="99" column="0" selection-start="1495" selection-end="1495" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
   </component>
@@ -1123,6 +965,7 @@
             <option name="proportions">
               <list>
                 <option value="0.1137787" />
+                <option value="0.5" />
               </list>
             </option>
           </splitter-proportions>

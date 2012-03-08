@@ -12,6 +12,8 @@ import java.awt.geom.{Area, Rectangle2D, Ellipse2D}
 import java.awt._
 import scala.math
 import com.vividsolutions.jts.geom.{GeometryFactory, Coordinate, Geometry}
+import java.util.Random
+
 
 object Element {
 
@@ -45,6 +47,8 @@ abstract class Element(val name: String,
 
   import Element._
 
+  def updateBounds
+
   override def toString: String = name + " (" + p.scaledX + ", " + p.scaledY + ")"
 }
 
@@ -55,20 +59,35 @@ abstract class Element(val name: String,
 case class Range(override val name: String,
                  override val p: Position) extends Element(name, p) {
 
-  protected override lazy val colorUnselected = new Color(176f / 255f, 43f / 255f, 44f / 255f, 1.0f)
-  protected override lazy val colorSelected = new Color(176f / 255f, 43f / 255f, 44f / 255f, 0.3f)
+
+  val rnd = new Random
+
+  val r = rnd.nextInt(255)
+  val g = rnd.nextInt(255)
+  val b = rnd.nextInt(255)
+  println("%s %s  %s".format(r, g, b))
+  /*val r = 255f / math.abs(rnd.nextFloat + 255f)
+  val g = 255f / math.abs(rnd.nextFloat + 255f)
+  val b = 255f / math.abs(rnd.nextFloat + 255f)*/
+
+
+  protected override lazy val colorUnselected = new Color(r, g, b, 255)
+  protected override lazy val colorSelected = new Color(r, g, b, 77)
   protected var form: Shape = new Ellipse2D.Double
 
   setPaint(colorUnselected)
   setBounds(p.x, p.y, 20, 20)
 
+  override def updateBounds = {
+    /*nothing todo */
+  }
 
   override def paint(aPaintContext: PPaintContext) = {
     val g2 = aPaintContext.getGraphics
     g2.setPaint(getPaint)
     g2.draw(form)
     if (isSelected) g2.fill(form)
-    g2.setStroke(new BasicStroke(2))
+    g2.setStroke(new BasicStroke(1))
   }
 
   def update(f: Shape) = {
@@ -89,5 +108,7 @@ case class SPoint(override val name: String,
   protected var form: Shape = new Ellipse2D.Double
   setBounds(p.scaledX, p.scaledY, 5, 5)
   setPaint(colorUnselected)
+
+  def updateBounds = setBounds(p.scaledX - 2, p.scaledY - 2, 5, 5)
 }
 

@@ -10,7 +10,7 @@ import view.SPoint
 
 
 class PointModel(val view: SPoint, val raster: Raster)
-  extends ConstraintVertex(new Coordinate(view.p.scaledX, view.p.scaledY)) with DElement with Logger {
+  extends ConstraintVertex(new Coordinate(view.p.scaledX, view.p.scaledY)) with DElement {
 
   import DGeometry._
   import DElement._
@@ -18,75 +18,96 @@ class PointModel(val view: SPoint, val raster: Raster)
 
   private val x = view.p.scaledX
   private val y = view.p.scaledY
-  lazy val center = point(new Coordinate(x, y))
-  lazy val basicGeometry = circle(x, y, minRadius / 2)
-  lazy val basicCells = raster.intersectCells(basicGeometry)
-  lazy val wishArea = math.Pi * math.pow(meanRadius, 2)
-  lazy val centerCell = basicCells.find(cell => cell.geom.intersects(center)).get
-  lazy val basicVertices = basicCells.flatMap(c => c.vertices.filter(v => basicGeometry.contains(v.vertex)))
+  val center = point(new Coordinate(x, y))
+  val basicGeometry = circle(x, y, minRadius / 2)
+  val wishArea = math.Pi * math.pow(meanRadius, 2)
+  val centerCell = raster.nodes.find(cell => cell.data.intersects(center)).get
+
+  val basicCells = raster.intersectCells(basicGeometry)
+  val basicVertices: Set[Vertex] = basicCells.flatMap(c => c.vertices.filter(v => basicGeometry.contains(v.vertex)))
+
+
   raster.traversableOff(basicCells)
-  raster.lockVertices(basicCells, basicGeometry)
+  disable
 
 
-  override def enable: List[Cell] = {
-
-    println("WISH CELLs")
+  override def enable: Set[Cell] = {
+    isActiv = true
     /*println("wishArea: %s".format(wishArea))
   println("befor Area: %s".format(raster.getArea(basicCells)))*/
-    raster.activateAllVertices(basicCells)
+    //raster.activateAllVertices(basicCells)
     val cells = expandCells(basicCells)
-    println("WISH CELLS")
     // println("after area: %s".format(raster.getArea(cells)))
     cells
+    /*raster.activateAllVertices(basicCells)
+    basicCells.foreach(s => println(s.toString))*/
+    //    raster.intersectCells(basicGeometry).foreach(s => println(s.toString))
+    /*  println("-----------------------------------------------")
+  val set:List[Cell] = raster.cells.values.filter(cell => cell.intersects(basicGeometry)).toList
+  set.foreach(s => println(s.toString))*/
+    //basicCells
+
   }
 
   override def disable = {
-    raster.disableVertices(basicGeometry)
+    isActiv = false
+    basicVertices.foreach(v => v.lock)
   }
 
-  private def expandCells(cells: List[Cell]): List[Cell] = {
+  private def expandCells(cells: Set[Cell]): Set[Cell] = {
 
     var topArea: Double = wishArea - raster.getArea(cells)
     var lastArea: Double = 0
     basicVertices.foreach(v => v.activate)
+    var topf: Set[Cell] = cells
 
-    def expandCellsRec(cells: List[Cell]): List[Cell] = {
-
+    def expandCellsRec(cells: Set[Cell]): Set[Cell] = {
+      // println("topArea: %s  lastArea: %s".format(topArea, lastArea))
+      /* println(" =======  ALLE ZELLEN =======")
+      cells.foreach(c => println(c.toString))*/
       // If the area didn't changed after last expand operation, give up. There are no wishArea for Jim!
       if (topArea != lastArea) {
 
         // memorize the last area
         lastArea = topArea
 
-        val contourCells: List[Cell] = cells.filter(c => !c.isEmpty)
+        //cells.foreach(c => c.enable)
 
-        println("cCells: %s".format(contourCells.size))
+        val randZellen: Set[Cell] = cells.filter(c => !c.isEmpty)
 
-        contourCells.foreach(c => c.enable)
+        /*println(" =======  RANDZELLEN =======")
+        randZellen.foreach(c => println(c.toString))*/
 
-        val neigh = contourCells.flatMap(c => raster.getNeighbours(c))
+        val nachbarn: Set[Cell] = randZellen.flatMap(c => raster.getNeighbours(c))
+
+        /* println(" =======  NACHBARN =======")
+      nachbarn.foreach(c => println(c.toString))*/
+
+        randZellen.foreach(c => if (!c.isBusy) c.enable)
 
         // expanded cells
-        val newCells = (neigh ::: cells).distinct
+        topf = nachbarn ++ topf
+
+        /* println(" =======  TOPF =======")
+      topf.foreach(c => println(c.toString))*/
 
         /*
         * enable all vertices of the current cells and subtract the
         * result from the topArea
         */
-        topArea = wishArea - raster.getArea(newCells)
-        println("topArea: %s".format(topArea))
-        if (topArea > 200) {
-          expandCellsRec(newCells)
-        } else
-          newCells
+        topArea = wishArea - raster.getArea(topf)
 
+        if (topArea > 300) {
+          expandCellsRec(topf)
+        } else
+          topf
       } else {
-        cells
+        topf
       }
     }
-    expandCellsRec(basicCells)
-  }
 
+    expandCellsRec(cells)
+  }
 
 }
 

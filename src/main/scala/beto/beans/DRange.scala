@@ -1,11 +1,11 @@
 package beto.beans
 
 import _root_.beto.log.Logger
-import view.Element
-import view.Range
+import marching.{Vertex, Cell}
 import com.vividsolutions.jts.algorithm.ConvexHull
 import com.vividsolutions.jts.geom._
-import marching.Cell
+import view.{ANode, Element, Range}
+import org.geotools.geometry.jts.JTS
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,14 +35,16 @@ class DRange(val view: Range, val delaunay: DelaunayGraph) extends DElement with
 
   private var children = List[DElement]()
 
+
   /* Nicht optimierte Bereichsumgebung eines Knotens */
   //  lazy val areaOptimal = children.map(_.areaOptimal).sum
   lazy val raster = delaunay.raster
   override lazy val isLeaf = false
-
+  var astarCells: Set[ANode] = Set[ANode]()
   var basicGeometry: Geometry = emptyGeometry
-  var basicCells: List[Cell] = List[Cell]()
-  var name = view.name
+  var basicCells: Set[Cell] = Set[Cell]()
+  var basicVertices: Set[Vertex] = Set[Vertex]()
+
 
   /**
    *
@@ -92,86 +94,137 @@ class DRange(val view: Range, val delaunay: DelaunayGraph) extends DElement with
     }
   }
 
-
   /**
    *
    */
   def inactive = {
-    raster.inactiveVertices(basicCells, basicGeometry)
-    children.foreach(_.disable)
+    basicVertices.foreach(v => v.delete)
   }
+
 
   def disable = {
-    println("DISABLE THIS ")
-    raster.disableVertices(basicCells, basicGeometry)
-    println("DISABLE CHILDREN ")
+    isActiv = false
+    basicVertices.foreach(v => v.disable)
     children.foreach(_.disable)
   }
 
-  def enable: List[Cell] = {
-    basicCells //TODO
+  def enable: Set[Cell] = {
+    isActiv = true
+    expandCells
+  }
+
+  def expandCells: Set[Cell] = {
+    basicVertices.foreach(v => v.activate)
+
+    val randZellen: Set[Cell] = basicCells.filter(c => !c.isEmpty)
+
+    val nachbarn: Set[Cell] = randZellen.flatMap(c => raster.getNeighbours(c))
+
+    randZellen.foreach(c => if (!c.isBusy) c.enable)
+
+    basicCells ++ nachbarn
+
   }
 
   /**
    *
    */
-  def update(geom: Geometry) = {
-    println("UPDATE")
-    basicGeometry = geom
-    view.update(shapeWriter.toShape(geom))
-    println("UPDATE DONE")
+  def update(pair: Pair[LinearRing, Array[LinearRing]]) = {
+    basicVertices = rangeVertices
+
+    val shell = JTS.smooth(pair._1, 0.0).asInstanceOf[LinearRing]
+    val holes = pair._2.map(geo => JTS.smooth(geo, 0.0).asInstanceOf[LinearRing])
+
+    basicGeometry = geomfact.createPolygon(shell, holes)
+    //basicGeometry = geomfact.createPolygon(pair._1, pair._2)
+    //
+    //basicGeometry = shell.symDifference(holes.head)
+
+    astarCells = raster.nodes.filter(as => basicGeometry.intersects(as.data)).toSet
+
+    view.update(shapeWriter.toShape(basicGeometry))
   }
 
+  def rangeVertices: Set[Vertex] = {
+    //val all: Set[Vertex] = basicCells.flatMap(c => c.vertices.filter(v => geom.contains(v.vertex)))
+    //val sub: Set[Vertex] = children.flatMap(ch => ch.basicVertices.toList).toSet
+    //all.diff(sub)
+    basicCells.flatMap(c => c.vertices.filter(v => v.isActive)) ++ children.flatMap(c => c.basicVertices)
+
+  }
 
   /**
    *
    */
   private def review(es: List[DElement]) = {
-    basicCells = basicGeometry.isEmpty match {
-      case true => println("geometry is empty"); collectCells(es)
-      case false => inactive; collectCells(es)
+    debug("review contour %s".format(es.size))
+    traversableOn(this :: es)
+    time("Gesamt ") {
+      basicCells = basicGeometry.isEmpty match {
+        case true => collectCells(es)
+        case false => inactive; collectCells(es)
+      }
+
+      traversableOff(this :: es)
+
+      time("Update") {
+        update(time("Contour ") {
+          contour(basicCells)
+        })
+      }
+      disable
     }
-    update(contour(basicCells))
-    println("DISABLE")
-    disable
-    println("DISABLE DONE")
   }
 
-  private def collectCells(list: List[DElement]): List[Cell] = {
-    traversableOn(list)
+  private def collectCells(list: List[DElement]): Set[Cell] = {
 
-    val cells = list match {
+    debug("collect cells")
+    val cells: Set[Cell] = list match {
       case Nil => throw new Exception("Keine Elemente hinzugefügt")
+
       case List(a) => a.enable
 
       case List(_, _*) => {
-        mst(list) flatMap {
-          case (from, to) =>
-            val (startCell, endCell) = (from.asInstanceOf[PointModel].centerCell, to.asInstanceOf[PointModel].centerCell)
+        val m = time("MST ") {
+          mst(list)
+        }
+
+        m.flatMap{
+          //TODO cash einbauen, da knoten sich wiederholen
+          case (from: DElement, to: DElement) =>
+            val (startCell, endCell) = from.startEnd(to)
             val topoCells = raster.connection(startCell, endCell)
             //val connectedCells = raster.intersectCells(connectionGeom)
-            raster.enableAllVertices(topoCells)
-            topoCells  ::: from.enable ::: to.enable
-        }
+
+            val fromCells = if (!from.isActivate) from.enable else Set.empty[Cell]
+            val toCells = if (!to.isActivate) to.enable else Set.empty[Cell]
+            (topoCells ++ fromCells) ++ toCells
+          //topoCells
+        }.toSet
+
       }
     }
-    traversableOff(list)
-    cells.distinct
+    cells
   }
 
 
   private def mst(list: List[DElement]): List[Pair[DElement, DElement]] = {
-    val edges = for (i <- list;
-                     j <- list if i != j) yield (Edge(i, j, i.distance(j)))
-    kruskal(edges).toList.map(e => (e.v1, e.v2))
+
+    val edges = time("DIST ") {
+      for (i <- list;
+           j <- list if i != j) yield (Edge(i, j, i.distance(j)))
+    }
+    time("KRUSKAL ") {
+      kruskal(edges).toList.map(e => (e.v1, e.v2))
+    }
   }
 
   private def traversableOn(list: List[DElement]) = {
-    raster.traversableOn(list.flatMap(el => el.basicCells))
+    raster.traversableOn(list.flatMap(el => el.basicCells).toSet)
   }
 
   private def traversableOff(list: List[DElement]) = {
-    raster.traversableOff(list.flatMap(el => el.basicCells))
+    raster.traversableOff(list.flatMap(el => el.basicCells).toSet)
   }
 
   /***************************************************

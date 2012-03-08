@@ -103,6 +103,7 @@ class BeToFrame(val device: Display) extends ApplicationWindow(null) with Logger
     fileDlg.open match {
       case s: String => {
         val g = actionControl.newScenario(s)
+        graphEditor.clear
         graphEditor.drawGraph(g)
         history.add(s)
       }
@@ -423,18 +424,20 @@ class BeToFrame(val device: Display) extends ApplicationWindow(null) with Logger
   /**
    *
    */
-  def editorWidth: Int = gwidth - 20
+  def editorWidth: Int = gwidth + 100
 
   /**
    *
    */
-  def editorHeight: Int = gheight - 80
+  def editorHeight: Int = gheight + 100
 
   /**
    * Liefert die Bildschirmdimension
    */
   def dimension: Dimension = {
+    println("RESOLUTION: %s".format(Toolkit.getDefaultToolkit.getScreenResolution))
     Toolkit.getDefaultToolkit.getScreenSize
+
   }
 
   def status(msg: String) = {

@@ -21,18 +21,31 @@ import com.vividsolutions.jts.geom.{Geometry, GeometryFactory, Envelope, Coordin
 class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger {
 
   //DElement.minRadius = 20
-
-  lazy val coos: List[Coordinate] = spoints.map(p => new Coordinate(p.p.scaledX, p.p.scaledY))
+  debug("DelaunayGraph: %s Punkte.".format(spoints.size))
+  lazy val coos: List[Coordinate] = spoints.map(p => new Coordinate(p.p.x, p.p.y))
   lazy val dists: List[Double] = for (i <- coos; j <- coos if i != j) yield (i.distance(j))
 
-  DElement.minRadius = dists.min - 2
-  DElement.meanRadius = DElement.minRadius / 2  + 20
-  DElement.cellSize = DElement.minRadius.toInt / 5
+  /* val temp = dists.sortWith((a, b) => a < b)
+  var i = 0
+  temp.foreach{
+    e =>
+      println(e)
+      i += 1
+    if(i == 10) System.exit(0)
+  }*/
+
+  val dMin = dists.min.toInt / 4.5
+  DElement.cellSize = dMin.toInt / 3
+
+
+  DElement.minRadius = dists.min.toInt
+  DElement.meanRadius = DElement.minRadius + 10 // 2 + 10
+
 
   println("Closest pair: %s".format(DElement.minRadius))
-  println("Cell: %s".format(DElement.cellSize))
+  println("M %s K: %s".format(dMin, DElement.cellSize))
 
-  lazy val raster = new Raster(netview.w, netview.h, DElement.minRadius)
+  val raster = new Raster(netview.w, netview.h, dMin)
 
   /* Simone-Punkte zu Delaunay-Punkte konvertieren */
   lazy val pointsMap = HashMap(spoints.map{
@@ -107,7 +120,7 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
       }
   }*/
 
-  debug("Delaunay Graph initialisiert %s".format(dpoints.size))
+  debug("Delaunay Graph initialisiert")
 
   /* Durchschnittsradius berechnen (harmonischer Mitterlwert)*/
   //lazy val relEdges = edges.filter(e => e.orig.isInstanceOf[DPoint] && e.dest.isInstanceOf[DPoint])
@@ -123,6 +136,7 @@ class DelaunayGraph(val spoints: List[SPoint], netview: Network) extends Logger 
 
   /*  */
   def toRange(el: Seq[Element], vrange: Range) = {
+    debug("update contour: %s".format(vrange.name))
     val drange = ranges(vrange)
     drange.add(el.map(e => elements(e.name)))
   }

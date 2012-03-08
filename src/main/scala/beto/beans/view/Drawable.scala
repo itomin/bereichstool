@@ -101,7 +101,7 @@ trait Drawable extends PPath {
   override def paint(aPaintContext: PPaintContext) = {
     val g2 = aPaintContext.getGraphics
     g2.setPaint(getPaint)
-    g2.fillOval(getX.toInt, getY.toInt, 5, 5)
+    g2.fillOval(getX.toInt - 2, getY.toInt - 2, 5, 5)
     g2.setStroke(new BasicStroke(0))
   }
 }

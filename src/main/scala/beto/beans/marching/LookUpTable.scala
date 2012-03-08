@@ -16,7 +16,7 @@ import com.vividsolutions.jts.geom.{Coordinate, Geometry}
 object LookUpTable {
   type C = Coordinate
   type G = Geometry
-  type F = Function1[Cell, Pair[C, C]]
+  type F = Function1[Cell, List[Pair[C, C]]]
 
   import DElement._
 
@@ -29,22 +29,24 @@ object LookUpTable {
   val WHOLE = math.pow(cellSize, 2)
 
   private val table = Array[F](
-    (c: Cell) => (new C(0, 0), new C(0, 0)), // 0
-    (c: Cell) => (new C(c.x - offset, c.y), new C(c.x, c.y + offset)), // 1
-    (c: Cell) => (new C(c.x, c.y + offset), new C(c.x + offset, c.y)), // 2
-    (c: Cell) => (new C(c.x - offset, c.y), new C(c.x + offset, c.y)), // 3
-    (c: Cell) => (new C(c.x + offset, c.y), new C(c.x, c.y - offset)), // 4
-    (c: Cell) => (new C(0, 0), new C(0, 0)), //TODO MultiString
-    (c: Cell) => (new C(c.x, c.y + offset), new C(c.x, c.y - offset)), // 6
-    (c: Cell) => (new C(c.x - offset, c.y), new C(c.x, c.y - offset)), // 7
-    (c: Cell) => (new C(c.x, c.y - offset), new C(c.x - offset, c.y)), // 8
-    (c: Cell) => (new C(c.x, c.y - offset), new C(c.x, c.y + offset)), // 9
-    (c: Cell) => (new C(0, 0), new C(0, 0)), //TODO MultiString
-    (c: Cell) => (new C(c.x, c.y - offset), new C(c.x + offset, c.y)), // 11
-    (c: Cell) => (new C(c.x + offset, c.y), new C(c.x - offset, c.y)), // 12
-    (c: Cell) => (new C(c.x + offset, c.y), new C(c.x, c.y + offset)), // 13
-    (c: Cell) => (new C(c.x, c.y + offset), new C(c.x - offset, c.y)), // 14
-    (c: Cell) => (new C(0, 0), new C(0, 0)) // 15
+    (c: Cell) => (new C(0, 0), new C(0, 0)) :: Nil, // 0
+    (c: Cell) => (new C(c.x - offset, c.y), new C(c.x, c.y + offset)) :: Nil, // 1
+    (c: Cell) => (new C(c.x, c.y + offset), new C(c.x + offset, c.y)) :: Nil, // 2
+    (c: Cell) => (new C(c.x - offset, c.y), new C(c.x + offset, c.y)) :: Nil, // 3
+    (c: Cell) => (new C(c.x + offset, c.y), new C(c.x, c.y - offset)) :: Nil, // 4
+    (c: Cell) => List((new C(c.x - offset, c.y), new C(c.x, c.y + offset)),
+      (new C(c.x + offset, c.y), new C(c.x, c.y - offset))), //5
+    (c: Cell) => (new C(c.x, c.y + offset), new C(c.x, c.y - offset)) :: Nil, // 6
+    (c: Cell) => (new C(c.x - offset, c.y), new C(c.x, c.y - offset)) :: Nil, // 7
+    (c: Cell) => (new C(c.x, c.y - offset), new C(c.x - offset, c.y)) :: Nil, // 8
+    (c: Cell) => (new C(c.x, c.y - offset), new C(c.x, c.y + offset)) :: Nil, // 9
+    (c: Cell) => List((new C(c.x, c.y - offset), new C(c.x - offset, c.y)),
+      (new C(c.x, c.y + offset), new C(c.x + offset, c.y))), //10
+    (c: Cell) => (new C(c.x, c.y - offset), new C(c.x + offset, c.y)) :: Nil, // 11
+    (c: Cell) => (new C(c.x + offset, c.y), new C(c.x - offset, c.y)) :: Nil, // 12
+    (c: Cell) => (new C(c.x + offset, c.y), new C(c.x, c.y + offset)) :: Nil, // 13
+    (c: Cell) => (new C(c.x, c.y + offset), new C(c.x - offset, c.y)) :: Nil, // 14
+    (c: Cell) => (new C(0, 0), new C(0, 0)) :: Nil // 15
   )
 
   private val tableArea = Array[Double](
@@ -66,9 +68,9 @@ object LookUpTable {
     WHOLE // 15
   )
 
-  def lookUp(c: Cell): Pair[C, C] = {
-    //table(c.bit)(c)
+  def lookUp(c: Cell): List[Pair[C, C]] = {
+    table(c.bit)(c)
   }
 
-  def lookUpArea(c: Cell): Double = tableArea(c.bitArea)
+  def lookUpArea(c: Cell): Double = tableArea(c.bit)
 }
